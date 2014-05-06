@@ -80,6 +80,8 @@ public class SimulationRunner {
 	 * @param args Arguments to the simulation 
 	 */
 	public static void main(String[] args) {
+		
+		
 		CarPark cp = new CarPark();
 		Simulator s = null;
 		Log l = null; 
@@ -92,6 +94,7 @@ public class SimulationRunner {
 		}
 		
 		//TODO: Implement Argument Processing 
+		//cp = new CarPark(maxCarSpaces, maxSmallCarSpaces, maxMotorCycleSpaces, maxQueueSize);
 		
 		//Run the simulation 
 		SimulationRunner sr = new SimulationRunner(cp,s,l);

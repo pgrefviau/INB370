@@ -3,6 +3,7 @@ package asgn2CarParks;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import asgn2Exceptions.SimulationException;
@@ -28,20 +29,25 @@ public class CarPark{
 	private int numMotorCycles = 0;
 	private int numDissatisfied = 0;
 	
+	// TODO: Check that this never goes over max maxSmallCarSpaces at any time
+	private int motorCycleOverflow;
+	
+	// TODO: Check that this never goes over max maxCarSpaces at any time
+	private int smallCarOverflow;
+	
 	private int count = 0;
 	
-	private LinkedList<Vehicle> past;
-	private LinkedList<Vehicle> queue;
-	private LinkedList<Vehicle> spaces;
+	private LinkedList<Vehicle> past = new LinkedList<Vehicle>();
+	private LinkedList<Vehicle> queue = new LinkedList<Vehicle>();
+	private LinkedList<Vehicle> spaces = new LinkedList<Vehicle>();
 	
 	private String status;
-	
 
 	public CarPark() {
-		this.maxCarSpaces = Constants.DEFAULT_MAX_CAR_SPACES;
-		this.maxSmallCarSpaces = Constants.DEFAULT_MAX_SMALL_CAR_SPACES;
-		this.maxMotorCycleSpaces = Constants.DEFAULT_MAX_MOTORCYCLE_SPACES;
-		this.maxQueueSize = Constants.DEFAULT_MAX_QUEUE_SIZE;
+		this(Constants.DEFAULT_MAX_CAR_SPACES, 
+			 Constants.DEFAULT_MAX_SMALL_CAR_SPACES, 
+			 Constants.DEFAULT_MAX_MOTORCYCLE_SPACES,
+			 Constants.DEFAULT_MAX_QUEUE_SIZE);
 	}
 	
 	public CarPark(int maxCarSpaces, int maxSmallCarSpaces, int maxMotorCycleSpaces, int maxQueueSize)
@@ -55,38 +61,41 @@ public class CarPark{
 
 	public void archiveDepartingVehicles(int time, boolean force) throws VehicleException
 	{
+		//We use a separate list to avoid ConcurrentModificationException on the queue;
+		List<Vehicle> tempParkedCars = new LinkedList<Vehicle>(spaces);
 		
 		// Iterate through the parked vehicles
-		Iterator<Vehicle> it = spaces.iterator();
-		while(it.hasNext())
+		for(Vehicle v : tempParkedCars)
 		{
-			Vehicle v = it.next();
-			if(v.getDepartureTime() >= time)
+			if(time >= v.getDepartureTime())
 				unparkVehicle(v, time);
 		}
 	}
 	
 	public void	archiveNewVehicle(Vehicle v)
-	{
+	{	
 		past.add(v);
+		this.numDissatisfied++;
 	}
 	
 	//Archive vehicles which have stayed in the queue too long
 	public void	archiveQueueFailures(int time) throws SimulationException, VehicleException
 	{
-		Iterator<Vehicle> it = queue.iterator();
-		while(it.hasNext())
+		//We use a separate list to avoid ConcurrentModificationException on the queue;
+		List<Vehicle> tempQueueCopy = new LinkedList<Vehicle>(queue);
+		
+		for(Vehicle v : tempQueueCopy)
 		{
-			Vehicle v = it.next();
 			int timeSpentInQueue = time - v.getArrivalTime();
-			
-			//TODO: Watch out for ConcurrentModificationExpcetion here --> Thorough testing
 			if(timeSpentInQueue > Constants.MAXIMUM_QUEUE_TIME)
 			{	
 				exitQueue(v, time);
 				past.add(v);
+				this.numDissatisfied++;
 			}
 		}
+		
+		
 	}
 	
 	//Simple status showing whether carPark is empty
@@ -98,7 +107,7 @@ public class CarPark{
 	//Simple status showing whether carPark is full
 	public boolean	carParkFull()
 	{
-		return this.count >= (this.maxCarSpaces + this.maxMotorCycleSpaces);
+		return this.count >= (this.maxCarSpaces + this.maxMotorCycleSpaces + this.maxSmallCarSpaces);
 	}
 	
 	//Method to add vehicle successfully to the queue 
@@ -116,14 +125,12 @@ public class CarPark{
 	//Method to remove vehicle from the queue after which it will be parked or removed altogether.
 	public void	exitQueue(Vehicle v, int exitTime) throws SimulationException, VehicleException
 	{
-		
-		//TODO: Iterator n stuff 
-		
 		v.exitQueuedState(exitTime);
+		
 		Iterator<Vehicle> it = queue.iterator();
 		while(it.hasNext())
 		{
-			 if(it.next().getVehID() == v.getVehID())
+			 if(it.next().equals(v))
 			 {
 				 it.remove();
 				 return;
@@ -135,7 +142,8 @@ public class CarPark{
 	//All spaces and queue positions should be empty and so we dump the archive
 	public String  finalState()
 	{
-		
+		//TODO: Fix that
+		return initialState();
 	}
 	
 	//Simple getter for number of cars in the car park
@@ -144,17 +152,16 @@ public class CarPark{
 		return this.numCars;
 	}
 	
-	
 	//Simple getter for number of motorcycles in the car park
 	public int	getNumMotorCycles()
 	{
-		return this.numMotorCycles;
+		return this.numMotorCycles + this.motorCycleOverflow;
 	}
 	
 	//Simple getter for number of small cars in the car park
 	public int	getNumSmallCars()
 	{
-		return this.numSmallCars;
+		return this.numSmallCars + this.smallCarOverflow;
 	}
 	
 	//Simple status showing number of vehicles in the queue
@@ -163,10 +170,105 @@ public class CarPark{
 		return this.queue.size();
 	}
 	
+	// Indicates if there is place left for motorcycles in the carpark (including the small car spots overflow)
+	private boolean hasPlaceLeftForMotorCycles()
+	{
+		return !areMotorCycleSpotsFull() || !areSmallCarSpotsFull();
+	}
+	
+	// Indicates if there is place left for small cars in the carpark (including the car spots overflow)
+	private boolean hasPlaceLeftForSmallCars()
+	{
+		return !areSmallCarSpotsFull() || !areCarSpotsFull();
+	}
+	
+	// Indicates if there is place left for small cars in the carpark (including the car spots overflow)
+	private boolean hasPlaceLeftForCars()
+	{
+		return !areCarSpotsFull();
+	}
+	
+	// Indicates if the spots reserved for motorcycles are filled
+	private boolean areMotorCycleSpotsFull()
+	{
+		return this.numMotorCycles >= this.maxMotorCycleSpaces;
+	}
+	
+	// Indicates if the spots reserved for small cars are filled (including motorcycle overflows if any)
+	private boolean areSmallCarSpotsFull()
+	{
+		return (this.motorCycleOverflow + this.numSmallCars) >= this.maxSmallCarSpaces;
+	}
+	
+	// Indicates if the spots reserved for cars are filled (including small cars overflows if any)
+	private boolean areCarSpotsFull()
+	{
+		return (this.smallCarOverflow + this.numCars) >= this.maxCarSpaces;
+	}
+	
+	// Increments the number of total motorcycles, considering the overflow if necessary
+	private void incrementNumberOfMotorCycles()
+	{
+		if(!areMotorCycleSpotsFull())
+			this.numMotorCycles++;
+		else
+			this.motorCycleOverflow++;
+	}
+	
+	// Decrements the number of total motorcycles, considering the overflow if necessary	
+	private void decrementNumberOfMotorCycles()
+	{
+		if(!isMotorCycleOverflowEmpty())
+			this.numMotorCycles--;
+		else
+			this.motorCycleOverflow--;
+	}
+	
+	// Increments the number of total small cars, considering the overflow if necessary
+	private void incrementNumberOfSmallCars()
+	{
+		if(!areSmallCarSpotsFull())
+			this.numSmallCars++;
+		else
+			this.smallCarOverflow++;
+	}
+
+	// Decrements the number of total small cars, considering the overflow if necessary	
+	private void decrementNumberOfSmallCars()
+	{
+		if(isSmallCarOverflowEmpty())
+			this.numSmallCars--;
+		else
+			this.smallCarOverflow--;
+	}
+	
+	// Increments the number of total cars
+	private void incrementNumberOfCars()
+	{
+		this.numCars++;
+	}
+	
+	// Decrements the number of total cars
+	private void decrementNumberOfCars()
+	{
+		this.numCars--;
+	}
+	
+	// Indicates if the overflow buffer for the motocycles (onto the small cars spots) is empty
+	private boolean isMotorCycleOverflowEmpty()
+	{
+		return this.motorCycleOverflow == 0;
+	}
+	
+	// Indicates if the overflow buffer for the small cars (onto the cars spots) is empty
+	private boolean isSmallCarOverflowEmpty()
+	{
+		return this.smallCarOverflow == 0;
+	}
+	
 	//Method to add vehicle successfully to the car park store.
 	public void	parkVehicle(Vehicle v, int time, int intendedDuration) throws SimulationException, VehicleException
 	{
-		
 		if(!spacesAvailable(v))
 			throw new SimulationException("There are no places left for this kind of vehicule within the carpark");
 		
@@ -176,13 +278,13 @@ public class CarPark{
 		if(v instanceof Car)
 		{
 			if(((Car)v).isSmall())
-				this.numSmallCars++;
-			
-			this.numCars++;
+				incrementNumberOfSmallCars();
+			else
+				incrementNumberOfCars();
 		}
 		
 		if(v instanceof MotorCycle)
-			this.numMotorCycles++;
+			incrementNumberOfMotorCycles();
 			
 		count++;	
 	}
@@ -190,14 +292,13 @@ public class CarPark{
 	//Silently process elements in the queue, whether empty or not.
 	public void	processQueue(int time, Simulator sim) throws SimulationException, VehicleException
 	{
-		Iterator<Vehicle> it = queue.iterator();
-		
-		while(it.hasNext())
+		//We use a separate list to avoid ConcurrentModificationException on the queue;
+		List<Vehicle> tempQueueCopy = new LinkedList<Vehicle>(queue);
+			
+		for(Vehicle v : tempQueueCopy)
 		{
-			Vehicle v = it.next();
 			if(spacesAvailable(v))
 			{
-				//TODO: Watch out here too for ConcurentModificationException
 				exitQueue(v, time);
 				parkVehicle(v, time, sim.setDuration());
 			}
@@ -221,19 +322,21 @@ public class CarPark{
 	//Method determines, given a vehicle of a particular type, whether there are spaces available for that type in the car park under the parking policy in the class header.
 	public boolean	spacesAvailable(Vehicle v)
 	{
+		if(carParkFull())
+			return false;
+		
 		if(v instanceof Car)
 		{			
 			Car car = (Car) v;
 			if(car.isSmall())
-				return this.numSmallCars < this.maxSmallCarSpaces;
+				return hasPlaceLeftForSmallCars();
 			else
-				return this.numCars < this.maxCarSpaces;
+				return hasPlaceLeftForCars();
 		}
 		
 		if(v instanceof MotorCycle)
-			return this.numMotorCycles < this.maxMotorCycleSpaces;
+			return hasPlaceLeftForMotorCycles();
 
-		
 		// TODO: Throw exception ?
 		return false;
 	}
@@ -241,7 +344,7 @@ public class CarPark{
 	@Override
 	public String toString() 
 	{
-		
+		return super.toString();
 	}
 	
 	public static String getNextId()
@@ -283,7 +386,7 @@ public class CarPark{
 	//Method to remove vehicle from the carpark.
 	public void	unparkVehicle(Vehicle v, int departureTime) throws VehicleException
 	{
-		//TODO: Iterate through list and remove given vehicle
+
 		Iterator<Vehicle> it = spaces.iterator();
 		while(it.hasNext())
 		{
@@ -300,13 +403,13 @@ public class CarPark{
 		if(v instanceof Car)
 		{
 			if(((Car)v).isSmall())
-				this.numSmallCars--;
-			
-			this.numCars--;
+				decrementNumberOfSmallCars();
+			else
+				decrementNumberOfCars();
 		}
 		
 		if(v instanceof MotorCycle)
-			this.numMotorCycles--;
+			decrementNumberOfMotorCycles();
 		
 		count--;
 	}

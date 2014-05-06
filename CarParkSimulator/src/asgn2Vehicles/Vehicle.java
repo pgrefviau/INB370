@@ -7,7 +7,6 @@ public abstract class Vehicle {
 
 	protected enum VehiculeState {NEW, QUEUED, PARKED, ARCHIVED}
 	
-	
 	protected VehiculeState state = VehiculeState.NEW;
 	protected String vehID;
 	
@@ -40,6 +39,9 @@ public abstract class Vehicle {
 	
 	public Vehicle(String vehID, int arrivalTime) throws VehicleException
 	{
+		if(arrivalTime <= 0)
+			throw new VehicleException("The arrival time for the vehicule has to be strictly positive");
+		
 		this.vehID = vehID;
 		this.arrivalTime = arrivalTime;
 	}
@@ -57,6 +59,7 @@ public abstract class Vehicle {
 			throw new VehicleException("Stay duration cannot be less than " + Constants.MINIMUM_STAY);
 		
 		this.parkingTime = parkingTime;
+		this.departureTime = this.parkingTime + intendedDuration;
 		this.state = VehiculeState.PARKED;
 		this.hasBeenParked = true;
 		this.isDissatisfied = false;
@@ -132,11 +135,13 @@ public abstract class Vehicle {
 		return this.state == VehiculeState.QUEUED;
 	}
 
+	//Boolean status indicating whether vehicle is currently archived	
 	public boolean	isArchived()
 	{
 		return this.state == VehiculeState.ARCHIVED;
 	}
 	
+	//Boolean status indicating whether vehicle is new	
 	public boolean	isNew()
 	{
 		return this.state == VehiculeState.NEW;
