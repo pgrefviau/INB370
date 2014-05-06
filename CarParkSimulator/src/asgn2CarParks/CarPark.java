@@ -23,7 +23,7 @@ public class CarPark{
 	private int maxSmallCarSpaces;
 	private int maxMotorCycleSpaces;
 	private int maxQueueSize;
-	
+	// use int
 	private int numCars = 0;
 	private int numSmallCars = 0;
 	private int numMotorCycles = 0;
