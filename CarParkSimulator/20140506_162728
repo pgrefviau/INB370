@@ -1,4 +1,4 @@
-20140506_131516: Start of Simulation
+20140506_162728: Start of Simulation
 Simulator [meanStay=120.0, sdStay=39.6, seed=100, carProb=0.5, smallCarProb=0.2, mcProb=0.05]
 CarPark [maxCarSpaces: 100 maxSmallCarSpaces: 20 maxMotorCycleSpaces: 20 maxQueueSize: 10]
 
@@ -1084,5 +1084,5 @@ CarPark [maxCarSpaces: 100 maxSmallCarSpaces: 20 maxMotorCycleSpaces: 20 maxQueu
 1079::36::P:36::C:29::S:5::M:3::D:0::A:543::Q:0
 1080::35::P:35::C:28::S:5::M:3::D:0::A:544::Q:0
 
-20140506_131516: End of Simulation
+20140506_162728: End of Simulation
 CarPark [maxCarSpaces: 100 maxSmallCarSpaces: 20 maxMotorCycleSpaces: 20 maxQueueSize: 10]

@@ -14,9 +14,6 @@ public class Car extends Vehicle{
 	}
 	
 	public boolean isSmall() {
-		
 		return this.isSmall;
 	}
-
-	
 }
