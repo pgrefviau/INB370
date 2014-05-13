@@ -29,16 +29,18 @@ public abstract class Vehicle {
 			return true;
 		
 		return ((Vehicle)obj).vehID.equals(this.vehID);
-	};
+	}
 	
 	@Override
 	public int hashCode() 
 	{
 		return Integer.valueOf(this.vehID).hashCode();
-	};
+	}
 	
 	public Vehicle(String vehID, int arrivalTime) throws VehicleException
 	{
+		
+
 		if(arrivalTime <= 0)
 			throw new VehicleException("The arrival time for the vehicle has to be strictly positive");
 		
@@ -139,22 +141,22 @@ public abstract class Vehicle {
 	}
 
 	//Boolean status indicating whether vehicle is currently archived	
-	public boolean	isArchived()
+	private boolean	isArchived()
 	{
 		return this.state == VehiculeState.ARCHIVED;
 	}
 	
 	//Boolean status indicating whether vehicle is new	
-	public boolean	isNew()
+	private boolean	isNew()
 	{
 		return this.state == VehiculeState.NEW;
 	}
 	
-	//Boolean status indicating whether customer is satisfied or not Satisfied if they park; dissatisfied if turned away, or queuing for too long 
-	//Note that calls to this method may not reflect final status
+	// Boolean status indicating whether customer is satisfied or not Satisfied if they park; dissatisfied if turned away, or queuing for too long 
+	// Note that calls to this method may not reflect final status
 	public boolean	isSatisfied()
 	{
-		return this.isDissatisfied;
+		return hasBeenParked;
 	}
 	
 	@Override
