@@ -40,7 +40,7 @@ public abstract class Vehicle {
 	public Vehicle(String vehID, int arrivalTime) throws VehicleException
 	{
 		if(arrivalTime <= 0)
-			throw new VehicleException("The arrival time for the vehicule has to be strictly positive");
+			throw new VehicleException("The arrival time for the vehicle has to be strictly positive");
 		
 		this.vehID = vehID;
 		this.arrivalTime = arrivalTime;
@@ -81,8 +81,11 @@ public abstract class Vehicle {
 		if(!isParked())
 			throw new VehicleException("Cannot transition from parked state: the vehicule is not in that state");
 		
+		
+		// it is reverse departureTime NOT departureTime (sheng)
 		if(departureTime < this.parkingTime)
 			throw new VehicleException("The departure time cannot be before the parking time");
+		
 		
 		this.state = VehiculeState.ARCHIVED;
 		this.departureTime = departureTime;
@@ -94,7 +97,7 @@ public abstract class Vehicle {
 	{
 		if(!isQueued())
 			throw new VehicleException("Cannot transition from queued state: the vehicule is not in that state");
-		
+		// you forgot if
 		if(exitTime < this.arrivalTime)
 			throw new VehicleException("The departure time cannot be before the parking time");
 	}
