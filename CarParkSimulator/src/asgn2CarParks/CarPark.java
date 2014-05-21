@@ -4,7 +4,6 @@ package asgn2CarParks;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import asgn2Exceptions.SimulationException;
 import asgn2Exceptions.VehicleException;
@@ -59,7 +58,7 @@ public class CarPark{
 	}
 
 
-	public void archiveDepartingVehicles(int time, boolean force) throws VehicleException
+	public void archiveDepartingVehicles(int currentTime, boolean force) throws VehicleException, SimulationException
 	{
 		//We use a separate list to avoid ConcurrentModificationException on the queue;
 		List<Vehicle> tempParkedCars = new LinkedList<Vehicle>(spaces);
@@ -67,13 +66,19 @@ public class CarPark{
 		// Iterate through the parked vehicles
 		for(Vehicle v : tempParkedCars)
 		{
-			if(time >= v.getDepartureTime())
-				unparkVehicle(v, time);
+			if(!v.isParked())
+				throw new VehicleException("One of the departing vehicles is not in the parked state");
+			
+			if(currentTime >= v.getDepartureTime() || force)
+				unparkVehicle(v, currentTime);
 		}
 	}
 	
-	public void	archiveNewVehicle(Vehicle v)
+	public void	archiveNewVehicle(Vehicle v) throws SimulationException
 	{	
+		if(v.isQueued() || v.isParked())
+			throw new SimulationException("Cannot archive the vehicule since it is not new");
+		
 		past.add(v);
 		this.numDissatisfied++;
 	}
@@ -86,6 +91,9 @@ public class CarPark{
 		
 		for(Vehicle v : tempQueueCopy)
 		{
+			if(!v.isQueued())
+				throw new VehicleException("The vehicle is in the queue, but not in the queued state (mismatch)");
+			
 			int timeSpentInQueue = time - v.getArrivalTime();
 			if(timeSpentInQueue > Constants.MAXIMUM_QUEUE_TIME)
 			{	
@@ -118,6 +126,9 @@ public class CarPark{
 		if(queueFull())
 			throw new SimulationException("The queue is full");
 		
+		if(v.isParked() || v.isQueued() || v.wasParked())
+			throw new VehicleException("Vehicle is not in a valid state to enter the queue");
+		
 		v.enterQueuedState();
 		queue.addLast(v);
 	}
@@ -125,7 +136,11 @@ public class CarPark{
 	//Method to remove vehicle from the queue after which it will be parked or removed altogether.
 	public void	exitQueue(Vehicle v, int exitTime) throws SimulationException, VehicleException
 	{
-		v.exitQueuedState(exitTime);
+		if(v.isParked() || !v.isQueued())
+			throw new VehicleException("The vehicle cannot exit the queue since it's not in the queud state");
+		
+		if(exitTime <= v.getArrivalTime()  )
+			throw new VehicleException("The vehicle's departure time has to be strictly greater than its arrival time");
 		
 		Iterator<Vehicle> it = queue.iterator();
 		while(it.hasNext())
@@ -136,6 +151,8 @@ public class CarPark{
 				 return;
 			 }
 		}
+		
+		v.exitQueuedState(exitTime);
 	}
 	
 	//State dump intended for use in logging the final state of the carpark
@@ -347,7 +364,7 @@ public class CarPark{
 		return super.toString();
 	}
 	
-	public static String getNextId()
+	private static String getNextId()
 	{
 		return String.valueOf(idCounter++);
 	}

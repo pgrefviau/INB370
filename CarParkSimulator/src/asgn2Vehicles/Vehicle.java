@@ -39,8 +39,6 @@ public abstract class Vehicle {
 	
 	public Vehicle(String vehID, int arrivalTime) throws VehicleException
 	{
-		
-
 		if(arrivalTime <= 0)
 			throw new VehicleException("The arrival time for the vehicle has to be strictly positive");
 		
@@ -52,7 +50,7 @@ public abstract class Vehicle {
 	public void enterParkedState(int parkingTime, int intendedDuration) throws VehicleException
 	{
 		if(!isQueued() && !isNew())
-			throw new VehicleException("Cannot transition to parked state: the vehicule must be in Queud or New state");
+			throw new VehicleException("Cannot transition to parked state: the vehicule must be in Queued or New state");
 		
 		if(parkingTime < 0)
 			throw new VehicleException("Parking time value must be positive");
