@@ -95,15 +95,13 @@ public class CarPark{
 				throw new VehicleException("The vehicle is in the queue, but not in the queued state (mismatch)");
 			
 			int timeSpentInQueue = time - v.getArrivalTime();
-			if(timeSpentInQueue > Constants.MAXIMUM_QUEUE_TIME)
+			if(timeSpentInQueue >= Constants.MAXIMUM_QUEUE_TIME)
 			{	
 				exitQueue(v, time);
 				past.add(v);
 				this.numDissatisfied++;
 			}
 		}
-		
-		
 	}
 	
 	//Simple status showing whether carPark is empty
@@ -400,20 +398,26 @@ public class CarPark{
 	}
 	
 	
-	//Method to remove vehicle from the carpark.
-	public void	unparkVehicle(Vehicle v, int departureTime) throws VehicleException
+	//Method to remove vehicle from the car park.
+	public void	unparkVehicle(Vehicle v, int departureTime) throws VehicleException, SimulationException
 	{
 
 		Iterator<Vehicle> it = spaces.iterator();
+		boolean foundVehicle = false;
 		while(it.hasNext())
 		{
 			if(it.next().equals(v))
 			{
 				it.remove();
+				foundVehicle = true;
 				break;
 			}	
 		}
 			
+		if(!foundVehicle)
+			throw new SimulationException("The vehicule to unpark was not found in the car park");
+		
+
 		past.addLast(v);
 		v.exitParkedState(departureTime);
 		

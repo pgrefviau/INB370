@@ -14,6 +14,7 @@ import asgn2CarParks.CarPark;
 import asgn2Exceptions.SimulationException;
 import asgn2Exceptions.VehicleException;
 import asgn2Simulators.Constants;
+import asgn2Simulators.Simulator;
 import asgn2Vehicles.Car;
 import asgn2Vehicles.MotorCycle;
 import asgn2Vehicles.Vehicle;
@@ -31,6 +32,8 @@ public class CarParkTests {
 	private static int vehicleArrivalTime = 0;
 	private static int vehiclePoolIndex = 0;
 	private static List<Vehicle> vehiclePool = new ArrayList<Vehicle>(); 
+	
+	//////////////////// HELPER METHODS ////////////////////
 	
 	private static int getRandomArrivalTimeIncrement()
 	{
@@ -71,16 +74,19 @@ public class CarParkTests {
 			return new MotorCycle(vehiculeId, arrivalTime);
 	}
 	
+	// Generate a car with random attributes	
 	private Car generateRandomCar() throws VehicleException
 	{
 		return new Car(getNextId(), getNextVehicleArrivalTime(), false);
 	}
 	
+	// Generate a small car with random attributes	
 	private Car generateRandomSmallCar() throws VehicleException
 	{
 		return new Car(getNextId(), getNextVehicleArrivalTime(), true);
 	}
 	
+	// Generate a motorcycle with random attributes 
 	private MotorCycle generateRandomMotorCycle() throws VehicleException
 	{
 		return new MotorCycle(getNextId(), getNextVehicleArrivalTime());
@@ -123,6 +129,8 @@ public class CarParkTests {
 		generateNewVehicles();
 	}
 	
+	//////////////////// TESTING THE EXCEPTIONS ////////////////////
+	
 	@Test(expected = VehicleException.class)
 	// Test if vehicle to be archived is not in the correct state
 	public void testIncorrectStateArchiveDepartingVehicleAttempt() throws VehicleException, SimulationException
@@ -164,57 +172,7 @@ public class CarParkTests {
 		v.enterParkedState(v.getArrivalTime(), Constants.MINIMUM_STAY);
 		carPark.archiveQueueFailures(0);
 	}
-	
-	@Test
-	public void testCarParkFull() throws VehicleException, SimulationException
-	{
-		int maxNbOfCars = Constants.DEFAULT_MAX_CAR_SPACES;
-		int maxNbOfMotorCycles = Constants.DEFAULT_MAX_MOTORCYCLE_SPACES;
-		int maxNbOfSmallCars = Constants.DEFAULT_MAX_SMALL_CAR_SPACES;
-		int total = maxNbOfSmallCars +maxNbOfMotorCycles + maxNbOfCars;
-		
-		carPark = new CarPark(maxNbOfCars, 
-				 			  maxNbOfMotorCycles, 
-				 			  maxNbOfSmallCars,
-				 			  Constants.DEFAULT_MAX_QUEUE_SIZE);
-		
-		String carId = getNextId(); 
-		
-		for(int i = 0; i < maxNbOfCars; i++)
-		{
-			int arrivalTime = getNextVehicleArrivalTime();
-			Vehicle v = new Car(carId, arrivalTime, false);
-			carPark.parkVehicle(v, arrivalTime, Constants.MINIMUM_STAY); 
-		}
-		
-		for(int i = 0; i < maxNbOfMotorCycles; i++)
-		{
-			int arrivalTime = getNextVehicleArrivalTime();
-			Vehicle v = new MotorCycle(carId, arrivalTime);
-			carPark.parkVehicle(v, arrivalTime, Constants.MINIMUM_STAY); 
-		}
-		
-		for(int i = 0; i < maxNbOfSmallCars; i++)
-		{
-			int arrivalTime = getNextVehicleArrivalTime();
-			Vehicle v = new Car(carId, arrivalTime, true);
-			carPark.parkVehicle(v, arrivalTime, Constants.MINIMUM_STAY); 
-		}
-		
-		assertTrue(carPark.carParkFull());
-	}
-	
-	@Test
-	public void testCarParkEmpty() throws SimulationException, VehicleException 
-	{
-		assertTrue(carPark.carParkEmpty());
-		
-		carPark.parkVehicle(getNextVehicle(), 0, Constants.MINIMUM_STAY);
-		assertFalse(carPark.carParkEmpty());
-		
-		carPark.archiveDepartingVehicles(Constants.MINIMUM_STAY, true);
-		assertTrue(carPark.carParkEmpty());
-	}
+
 	
 	@Test(expected = SimulationException.class)
 	//  Test adding a vehicle in queue when queue is full
@@ -262,4 +220,148 @@ public class CarParkTests {
 	}
 	
 	
+	//////////////////// TESTING ALL THE TRANSITIONS ////////////////////
+	
+	@Test
+	public void testVehicleClearedOutOfQueueAfterMaxDuration() throws SimulationException, VehicleException
+	{
+		Vehicle v = getNextVehicle();
+		carPark.enterQueue(v);
+		assertTrue(v.isQueued());
+		
+		int beforeMaxQueueTimeReached = v.getArrivalTime() + Constants.MAXIMUM_QUEUE_TIME - 1;
+		int onMaxQueueTimeReached = beforeMaxQueueTimeReached + 1;
+		
+		carPark.archiveQueueFailures(beforeMaxQueueTimeReached);
+		assertTrue(v.isQueued());
+		
+		carPark.archiveQueueFailures(onMaxQueueTimeReached);
+		assertFalse(v.isQueued());
+	}
+	
+	@Test
+	public void testVehicleClearedOutOfCarParkAfterMaxDuration()
+	{
+		
+	}
+	
+	@Test
+	public void testVehicleArchivedIfCarParkAndQueueAreBothFull()
+	{
+		
+	}
+	
+	@Test
+	public void testVehicleQueuedIfCarParkIsFull()
+	{
+		
+	}
+	
+	@Test
+	public void testVehicleParkedFromQueueIfCarParkSpaceAvailable()
+	{
+
+	}
+	
+	//////////////////// TESTING NUMBER OF VEHICLES IN CAR PARK ////////////////////
+	
+	
+	
+	//////////////////// TESTING SPECIFIC FUNCTIONS' VALIDITY ////////////////////
+	
+	public void testGeneralCarParkVehiculeInputOutputNumbers() throws SimulationException
+	{
+		int testPoolSize = 1000;
+		generateNewVehicles(testPoolSize);
+		Simulator sim = new Simulator();
+		
+	}
+	
+	
+	@Test
+	public void testCarParkEmpty() throws SimulationException, VehicleException 
+	{
+		assertTrue(carPark.carParkEmpty());
+		
+		carPark.parkVehicle(getNextVehicle(), 0, Constants.MINIMUM_STAY);
+		assertFalse(carPark.carParkEmpty());
+		
+		carPark.archiveDepartingVehicles(Constants.MINIMUM_STAY, true);
+		assertTrue(carPark.carParkEmpty());
+	}
+	
+	
+	@Test
+	public void testCarParkFull() throws VehicleException, SimulationException
+	{
+		
+		assertFalse(carPark.carParkFull());
+		
+		int maxNbOfCars = Constants.DEFAULT_MAX_CAR_SPACES;
+		int maxNbOfMotorCycles = Constants.DEFAULT_MAX_MOTORCYCLE_SPACES;
+		int maxNbOfSmallCars = Constants.DEFAULT_MAX_SMALL_CAR_SPACES;
+		int total = maxNbOfSmallCars + maxNbOfMotorCycles + maxNbOfCars;
+		
+		carPark = new CarPark(maxNbOfCars, 
+				 			  maxNbOfMotorCycles, 
+				 			  maxNbOfSmallCars,
+				 			  Constants.DEFAULT_MAX_QUEUE_SIZE);
+		
+		String carId = getNextId(); 
+		
+		for(int i = 0; i < maxNbOfCars; i++)
+		{
+			assertFalse(carPark.carParkFull());
+			int arrivalTime = getNextVehicleArrivalTime();
+			Vehicle v = new Car(carId, arrivalTime, false);
+			carPark.parkVehicle(v, arrivalTime, Constants.MINIMUM_STAY); 
+		}
+		
+		for(int i = 0; i < maxNbOfMotorCycles; i++)
+		{
+			assertFalse(carPark.carParkFull());
+			int arrivalTime = getNextVehicleArrivalTime();
+			Vehicle v = new MotorCycle(carId, arrivalTime);
+			carPark.parkVehicle(v, arrivalTime, Constants.MINIMUM_STAY); 
+		}
+		
+		for(int i = 0; i < maxNbOfSmallCars; i++)
+		{
+			assertFalse(carPark.carParkFull());
+			int arrivalTime = getNextVehicleArrivalTime();
+			Vehicle v = new Car(carId, arrivalTime, true);
+			carPark.parkVehicle(v, arrivalTime, Constants.MINIMUM_STAY); 
+		}
+		
+		assertTrue(carPark.carParkFull());
+	}
+	
+	@Test
+	public void testIfSatisfiedOnlyIfHasBeenParked() throws SimulationException, VehicleException
+	{
+		
+		Vehicle v1 = getNextVehicle();
+		Vehicle v2 = getNextVehicle();	
+		Vehicle v3 = getNextVehicle();	
+		assertFalse(v1.isSatisfied());
+		assertFalse(v2.isSatisfied());
+		assertFalse(v3.isSatisfied());
+		
+		carPark.enterQueue(v1);
+		carPark.enterQueue(v2);
+		carPark.archiveNewVehicle(v3);
+		assertFalse(v1.isSatisfied());
+		assertFalse(v2.isSatisfied());
+		assertFalse(v3.isSatisfied());
+		
+		carPark.parkVehicle(v1, v1.getArrivalTime() + 1, Constants.MINIMUM_STAY);
+		carPark.exitQueue(v2, v2.getArrivalTime() + 1);
+		assertTrue(v1.isSatisfied());
+		assertFalse(v2.isSatisfied());
+		
+		carPark.archiveDepartingVehicles(v1.getParkingTime() + 1, true);
+		assertTrue(v1.isSatisfied());
+	}
+	
+
 }
