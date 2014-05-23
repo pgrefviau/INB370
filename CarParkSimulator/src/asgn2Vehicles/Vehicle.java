@@ -29,7 +29,7 @@ public abstract class Vehicle {
 			return true;
 		
 		return ((Vehicle)obj).vehID.equals(this.vehID);
-	}
+	};
 	
 	@Override
 	public int hashCode() 
@@ -50,7 +50,10 @@ public abstract class Vehicle {
 	public void enterParkedState(int parkingTime, int intendedDuration) throws VehicleException
 	{
 		if(!isQueued() && !isNew())
-			throw new VehicleException("Cannot transition to parked state: the vehicule must be in Queued or New state");
+			throw new VehicleException("Cannot transition to parked state: the vehicule must be in Queud or New state");
+		
+		if(isParked() || hasBeenParked)
+			throw new VehicleException("Vehicle currently is or already has been in parked state");
 		
 		if(parkingTime < 0)
 			throw new VehicleException("Parking time value must be positive");
@@ -68,6 +71,9 @@ public abstract class Vehicle {
 	//Transition vehicle to queued state (mutator) Queuing formally starts on arrival and ceases with a call to exitQueuedState
 	public void	enterQueuedState() throws VehicleException
 	{
+		if(isQueued())
+			throw new VehicleException("Vehicle is already in queued state");
+		
 		if(!isNew())
 			throw new VehicleException("Cannot transition to queued state: the vehicule is not in New state");
 		
@@ -89,6 +95,7 @@ public abstract class Vehicle {
 		
 		this.state = VehiculeState.ARCHIVED;
 		this.departureTime = departureTime;
+		this.hasBeenParked = true;
 	}
 	
 	//Transition vehicle from queued state (mutator) 
@@ -139,7 +146,7 @@ public abstract class Vehicle {
 	}
 
 	//Boolean status indicating whether vehicle is currently archived	
-	private boolean	isArchived()
+	public boolean	isArchived()
 	{
 		return this.state == VehiculeState.ARCHIVED;
 	}
@@ -150,11 +157,11 @@ public abstract class Vehicle {
 		return this.state == VehiculeState.NEW;
 	}
 	
-	// Boolean status indicating whether customer is satisfied or not Satisfied if they park; dissatisfied if turned away, or queuing for too long 
-	// Note that calls to this method may not reflect final status
+	//Boolean status indicating whether customer is satisfied or not Satisfied if they park; dissatisfied if turned away, or queuing for too long 
+	//Note that calls to this method may not reflect final status
 	public boolean	isSatisfied()
 	{
-		return hasBeenParked;
+		return this.isDissatisfied;
 	}
 	
 	@Override
