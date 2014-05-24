@@ -49,7 +49,7 @@ public abstract class Vehicle {
 	//Transition vehicle to parked state (mutator) Parking starts on arrival or on exit from the queue, but time is set here
 	public void enterParkedState(int parkingTime, int intendedDuration) throws VehicleException
 	{
-		if(!isQueued() && !isNew())
+		if(isParked())
 			throw new VehicleException("Cannot transition to parked state: the vehicule must be in Queued or New state");
 		
 		if(parkingTime < 0)

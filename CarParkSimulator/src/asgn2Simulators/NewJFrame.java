@@ -1,35 +1,34 @@
 
+
 package asgn2Simulators;
 
 import asgn2CarParks.CarPark;
 import asgn2Exceptions.SimulationException;
-import java.awt.TextField;
 import java.io.IOException;
-import javax.swing.JTextField;
 
-public class GUISimulator extends javax.swing.JFrame {
-
-
+public class NewJFrame extends javax.swing.JFrame {
+    
     private CarPark carPark;
     private Simulator sim;
     private Log log;
     private SimulationRunner sr;
     
-    public GUISimulator() {
+    public NewJFrame() {
         initComponents();
         
         maxCarSpacesField.setText(String.valueOf(Constants.DEFAULT_MAX_CAR_SPACES));
-        maxSmallCarSpacesField.setText(String.valueOf(Constants.DEFAULT_MAX_SMALL_CAR_SPACES));
-        maxMotorCycleSpacesField.setText(String.valueOf(Constants.DEFAULT_MAX_MOTORCYCLE_SPACES));
-        maxQueueLengthField.setText(String.valueOf(Constants.DEFAULT_MAX_QUEUE_SIZE));
+        maxSmallCarSpacesField.setText(String.valueOf(Constants.DEFAULT_MAX_CAR_SPACES));
+        maxMotorCycleSpacesField.setText(String.valueOf(Constants.DEFAULT_MAX_CAR_SPACES));
+        maxQueueLengthField.setText(String.valueOf(Constants.DEFAULT_MAX_CAR_SPACES));
        
         simulationSeedField.setText(String.valueOf(Constants.DEFAULT_SEED));
         meanStayDurationField.setText(String.valueOf(Constants.DEFAULT_INTENDED_STAY_MEAN));
-        standardStayDurationField.setText(String.valueOf(Constants.DEFAULT_INTENDED_STAY_SD));
     }
    
-    public GUISimulator(String[] args) {
+    public NewJFrame(String[] args) {
         initComponents();
+        
+        
     }
     
     //Sets up a CarPark with the given arguments
@@ -50,67 +49,20 @@ public class GUISimulator extends javax.swing.JFrame {
             final double meanStay = Double.parseDouble(this.meanStayDurationField.getText());
             final double sdStay = Double.parseDouble(this.standardStayDurationField.getText());
             
-            final double carProb = this.carArrivalProbSlider.getValue() / 100.0f;
-            final double smallCarProb = this.smallCarArrivalProbSlider.getValue() / 100.0f;
-            final double motorCycleProb = this.motorCycleArrivalProbSlider.getValue() / 100.0f;
+            final double carProb = this.carArrivalProbSlider.getValue() / 100;
+            final double smallCarProb = this.smallCarArrivalProbSlider.getValue() / 100;
+            final double motorCycleProb = this.motorCycleArrivalProbSlider.getValue() / 100;
 
             return new Simulator(seed, meanStay, sdStay, carProb, smallCarProb, motorCycleProb);
     }
     
-    private void checkIfFieldIntegerValueIsHigherOrEqualTo(JTextField field, int value) throws Exception
-    {  
-        int fieldValue;
-        
-        try {
-            fieldValue = Integer.parseInt(field.getText());
-        } catch(NumberFormatException e){
-            throw new Exception("Value for the " + field.getToolTipText() + " field must be a valid integer");
-        }
-        
-        if(fieldValue < value)
-            throw new Exception("Value for the " + field.getToolTipText() + " field must be higher than " + value);
-    }
-    
-    private void checkIfFieldDoubleValueIsHigherOrEqualTo(JTextField field, double value) throws Exception
-    {  
-        double fieldValue;
-        
-        try {
-            fieldValue = Double.parseDouble(field.getText());
-        } catch(NumberFormatException e){
-            throw new Exception("Value for the " + field.getToolTipText() + " field must be a valid integer");
-        }
-        
-        if(fieldValue < value)
-            throw new Exception("Value for the " + field.getToolTipText() + " field must be higher than " + value);
-    }
-    
-    private boolean checkUiFieldsValidity()
+    private void initUIFields()
     {
-        try {
-            checkIfFieldIntegerValueIsHigherOrEqualTo(maxCarSpacesField, 0);
-            checkIfFieldIntegerValueIsHigherOrEqualTo(maxSmallCarSpacesField, 0);
-            checkIfFieldIntegerValueIsHigherOrEqualTo(maxMotorCycleSpacesField, 0);
-            checkIfFieldIntegerValueIsHigherOrEqualTo(maxQueueLengthField, 0);
-            
-            checkIfFieldDoubleValueIsHigherOrEqualTo(simulationSeedField, 0.0f);
-            checkIfFieldDoubleValueIsHigherOrEqualTo(meanStayDurationField, 0.0f);
-            checkIfFieldDoubleValueIsHigherOrEqualTo(standardStayDurationField, 0.0f);
-
-        } catch(Exception e) {
-            outputToTextArea(e.getMessage());
-            return false;
-        }
         
-        return true;
     }
    
     private void launchCarParkSimulation()
     {
-        if(!checkUiFieldsValidity())
-            return;
-        
-        outputToTextArea("Launching simulation...");
 
         try {
             carPark =  setUpCarParkFromUiFields();
@@ -128,9 +80,7 @@ public class GUISimulator extends javax.swing.JFrame {
         } catch (Exception e) {
             e.printStackTrace();
             outputToTextArea(e.getMessage());
-        }
-        
-        outputToTextArea("Simulation completed !");
+        } 
     }
     
     private void outputToTextArea(String str)
@@ -138,6 +88,7 @@ public class GUISimulator extends javax.swing.JFrame {
         simulationResultsTextArea.append(str + "\n");
     }
     
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -184,14 +135,6 @@ public class GUISimulator extends javax.swing.JFrame {
 
         maxQueueLengthLbl.setText("Maximum queue length:");
 
-        maxCarSpacesField.setToolTipText("Max Car Spaces");
-
-        maxSmallCarSpacesField.setToolTipText("Max Small Car Spaces");
-
-        maxMotorCycleSpacesField.setToolTipText("Max Motorcyle Spaces");
-
-        maxQueueLengthField.setToolTipText("Max Queue Length");
-
         simulationSeedLbl.setText("Simulation seed:");
 
         carArrivalProbLbl.setText("Car arrival probability");
@@ -208,8 +151,6 @@ public class GUISimulator extends javax.swing.JFrame {
 
         motorCycleArrivalProbSlider.setPaintTicks(true);
 
-        meanStayDurationField.setToolTipText("Mean Stay Duration");
-
         launchSimBtn.setText("Launch Simulation");
         launchSimBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -222,8 +163,6 @@ public class GUISimulator extends javax.swing.JFrame {
         jScrollPane1.setViewportView(simulationResultsTextArea);
 
         standardStayLbl.setText("Standard stay duration:");
-
-        standardStayDurationField.setToolTipText("Standard Stay Duration");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -376,20 +315,20 @@ public class GUISimulator extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GUISimulator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GUISimulator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GUISimulator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUISimulator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GUISimulator().setVisible(true);
+                new NewJFrame().setVisible(true);
             }
         });
     }

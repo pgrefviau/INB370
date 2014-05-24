@@ -28,11 +28,13 @@ public class CarPark{
 	private int numMotorCycles = 0;
 	private int numDissatisfied = 0;
 	
+	private int motorCycleRegularSpots = 0;
 	// TODO: Check that this never goes over max maxSmallCarSpaces at any time
-	private int motorCycleOverflow;
+	private int motorCycleOverflow = 0;
 	
+	private int smallCarRegularSpots = 0;
 	// TODO: Check that this never goes over max maxCarSpaces at any time
-	private int smallCarOverflow;
+	private int smallCarOverflow = 0;
 	
 	private int count = 0;
 	
@@ -170,13 +172,13 @@ public class CarPark{
 	//Simple getter for number of motorcycles in the car park
 	public int	getNumMotorCycles()
 	{
-		return this.numMotorCycles + this.motorCycleOverflow;
+		return this.motorCycleRegularSpots + this.motorCycleOverflow;
 	}
 	
 	//Simple getter for number of small cars in the car park
 	public int	getNumSmallCars()
 	{
-		return this.numSmallCars + this.smallCarOverflow;
+		return this.smallCarRegularSpots + this.smallCarOverflow;
 	}
 	
 	//Simple status showing number of vehicles in the queue
@@ -206,13 +208,13 @@ public class CarPark{
 	// Indicates if the spots reserved for motorcycles are filled
 	private boolean areMotorCycleSpotsFull()
 	{
-		return this.numMotorCycles >= this.maxMotorCycleSpaces;
+		return this.motorCycleRegularSpots >= this.maxMotorCycleSpaces;
 	}
 	
 	// Indicates if the spots reserved for small cars are filled (including motorcycle overflows if any)
 	private boolean areSmallCarSpotsFull()
 	{
-		return (this.motorCycleOverflow + this.numSmallCars) >= this.maxSmallCarSpaces;
+		return (this.motorCycleOverflow + this.smallCarRegularSpots) >= this.maxSmallCarSpaces;
 	}
 	
 	// Indicates if the spots reserved for cars are filled (including small cars overflows if any)
@@ -225,36 +227,44 @@ public class CarPark{
 	private void incrementNumberOfMotorCycles()
 	{
 		if(!areMotorCycleSpotsFull())
-			this.numMotorCycles++;
+			this.motorCycleRegularSpots++;
 		else
 			this.motorCycleOverflow++;
+		
+		this.numMotorCycles++;
 	}
 	
 	// Decrements the number of total motorcycles, considering the overflow if necessary	
 	private void decrementNumberOfMotorCycles()
 	{
 		if(!isMotorCycleOverflowEmpty())
-			this.numMotorCycles--;
+			this.motorCycleRegularSpots--;
 		else
 			this.motorCycleOverflow--;
+		
+		this.numMotorCycles--;
 	}
 	
 	// Increments the number of total small cars, considering the overflow if necessary
 	private void incrementNumberOfSmallCars()
 	{
 		if(!areSmallCarSpotsFull())
-			this.numSmallCars++;
+			this.smallCarRegularSpots++;
 		else
 			this.smallCarOverflow++;
+		
+		this.numSmallCars++;
 	}
 
 	// Decrements the number of total small cars, considering the overflow if necessary	
 	private void decrementNumberOfSmallCars()
 	{
 		if(isSmallCarOverflowEmpty())
-			this.numSmallCars--;
+			this.smallCarRegularSpots--;
 		else
 			this.smallCarOverflow--;
+		
+		this.numSmallCars--;
 	}
 	
 	// Increments the number of total cars

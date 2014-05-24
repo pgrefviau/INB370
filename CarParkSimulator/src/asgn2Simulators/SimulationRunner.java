@@ -15,6 +15,7 @@ import java.io.IOException;
 import asgn2CarParks.CarPark;
 import asgn2Exceptions.SimulationException;
 import asgn2Exceptions.VehicleException;
+import javax.swing.JFrame;
 
 /**
  * Class to operate the simulation, taking parameters and utility methods from the Simulator
@@ -23,10 +24,31 @@ import asgn2Exceptions.VehicleException;
  *
  */
 public class SimulationRunner {
-	private CarPark carPark;
-	private Simulator sim;
 	
-	private Log log;
+    
+        private CarPark carPark;
+        private Simulator sim;
+        private Log log;
+        private SimulationRunner sr;
+	
+        private static GUISimulator guiSimulator;
+        
+	private static enum ArgTypes {INTEGER, DOUBLE};
+	private static final ArgTypes[] validArgTypesMapping = 
+        {
+            ArgTypes.INTEGER,
+            ArgTypes.INTEGER,
+            ArgTypes.INTEGER,
+            ArgTypes.INTEGER,
+            ArgTypes.INTEGER,
+            ArgTypes.DOUBLE,
+            ArgTypes.DOUBLE,
+            ArgTypes.DOUBLE,
+            ArgTypes.DOUBLE,
+            ArgTypes.DOUBLE
+        };
+	
+
 	
 	/**
 	 * Constructor just does initialisation 
@@ -39,7 +61,6 @@ public class SimulationRunner {
 		this.sim = sim;
 		this.log = log;
 	}
-	
 	
 	/**
 	 * Method to run the simulation from start to finish. Exceptions are propagated upwards from Vehicle,
@@ -76,37 +97,6 @@ public class SimulationRunner {
 	}
 
 	/**
-	 * Main program for the simulation 
-	 * @param args Arguments to the simulation 
-	 */
-	public static void main(String[] args) {
-		
-		
-		CarPark cp = new CarPark();
-		Simulator s = null;
-		Log l = null; 
-		try {
-			s = new Simulator();
-			l = new Log();
-		} catch (IOException | SimulationException e1) {
-			e1.printStackTrace();
-			System.exit(-1);
-		}
-		
-		//TODO: Implement Argument Processing 
-		//cp = new CarPark(maxCarSpaces, maxSmallCarSpaces, maxMotorCycleSpaces, maxQueueSize);
-		
-		//Run the simulation 
-		SimulationRunner sr = new SimulationRunner(cp,s,l);
-		try {
-			sr.runSimulation();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
-		} 
-	} 
-
-	/**
 	 * Helper method to determine if new vehicles are permitted
 	 * @param time int holding current simulation time
 	 * @return true if new vehicles permitted, false if not allowed due to simulation constraints. 
@@ -115,5 +105,48 @@ public class SimulationRunner {
 		boolean allowed = (time >=1);
 		return allowed && (time <= (Constants.CLOSING_TIME - 60));
 	}
+	
+	private static boolean areArgumentsValid(String[] args)
+	{
+		if(args.length != validArgTypesMapping.length)
+			return false;
+	
+		try{
+                    for(int i = 0 ; i < validArgTypesMapping.length; i++)
+                    {
+                        switch(validArgTypesMapping[i])
+                        {
+                            case INTEGER: Integer.parseInt(args[i]);
+                                    break;
+                            case DOUBLE: Double.parseDouble(args[i]);
+                                    break;
+                        }
+                    }
+		}
+		catch(NumberFormatException e)
+		{
+                    return false;
+		}
+		
+		return true;
+	}
+        
+	/**
+	 * Main program for the simulation 
+	 * @param args Arguments to the simulation 
+	 */
+	public static void main(String[] args) {
+			
+            if(args.length == 0)
+                guiSimulator = new GUISimulator();
+            else if(areArgumentsValid(args))
+                guiSimulator = new GUISimulator(args);
+            else
+                System.exit(-1);
+            
+            guiSimulator.setVisible(true);
+	} 
+
+
 
 }
