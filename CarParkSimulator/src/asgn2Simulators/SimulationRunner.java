@@ -15,7 +15,6 @@ import java.io.IOException;
 import asgn2CarParks.CarPark;
 import asgn2Exceptions.SimulationException;
 import asgn2Exceptions.VehicleException;
-import javax.swing.JFrame;
 
 /**
  * Class to operate the simulation, taking parameters and utility methods from the Simulator
@@ -47,7 +46,6 @@ public class SimulationRunner {
             ArgTypes.DOUBLE,
             ArgTypes.DOUBLE
         };
-	
 
 	
 	/**
@@ -108,27 +106,27 @@ public class SimulationRunner {
 	
 	private static boolean areArgumentsValid(String[] args)
 	{
-		if(args.length != validArgTypesMapping.length)
-			return false;
-	
-		try{
-                    for(int i = 0 ; i < validArgTypesMapping.length; i++)
-                    {
-                        switch(validArgTypesMapping[i])
-                        {
-                            case INTEGER: Integer.parseInt(args[i]);
-                                    break;
-                            case DOUBLE: Double.parseDouble(args[i]);
-                                    break;
-                        }
-                    }
-		}
-		catch(NumberFormatException e)
-		{
+            if(args.length != validArgTypesMapping.length)
                     return false;
-		}
-		
-		return true;
+
+            try{
+                for(int i = 0 ; i < validArgTypesMapping.length; i++)
+                {
+                    switch(validArgTypesMapping[i])
+                    {
+                        case INTEGER: Integer.parseInt(args[i]);
+                                break;
+                        case DOUBLE: Double.parseDouble(args[i]);
+                                break;
+                    }
+                }
+            }
+            catch(NumberFormatException e)
+            {
+                return false;
+            }
+
+            return true;
 	}
         
 	/**
