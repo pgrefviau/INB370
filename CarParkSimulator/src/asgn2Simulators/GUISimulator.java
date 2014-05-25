@@ -3,6 +3,8 @@ package asgn2Simulators;
 
 import asgn2CarParks.CarPark;
 import asgn2Exceptions.SimulationException;
+import asgn2Exceptions.VehicleException;
+
 import java.awt.TextField;
 import java.io.IOException;
 import java.util.EventListener;
@@ -24,10 +26,10 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
                         String maxSmallCarSpacesFieldValue,
                         String maxMotorCycleSpacesFieldValue,
                         String maxQueueLengthFieldValue,
+                        String simulationSeedFieldValue,
                         int carArrivalProbSliderValue,
                         int smallCarArrivalProbSliderValue,
                         int motorCycleArrivalProbSliderValue,
-                        String simulationSeedFieldValue,
                         String meanStayDurationFieldValue,
                         String standardStayDurationFieldValue)
     {
@@ -59,26 +61,28 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
              String.valueOf(Constants.DEFAULT_MAX_SMALL_CAR_SPACES),
              String.valueOf(Constants.DEFAULT_MAX_MOTORCYCLE_SPACES),
              String.valueOf(Constants.DEFAULT_MAX_QUEUE_SIZE),
+             String.valueOf(Constants.DEFAULT_SEED),
              (int)(Constants.DEFAULT_CAR_PROB * 100),
              (int)(Constants.DEFAULT_SMALL_CAR_PROB * 100),
              (int)(Constants.DEFAULT_MOTORCYCLE_PROB * 100),
-             String.valueOf(Constants.DEFAULT_SEED),
              String.valueOf(Constants.DEFAULT_INTENDED_STAY_MEAN),
              String.valueOf(Constants.DEFAULT_INTENDED_STAY_SD));
     }
    
     public GUISimulator(String[] args) 
     {
-        this(args[0],
-             args[1],
-             args[2],
-             args[3],
-             (int)(Double.parseDouble(args[4]) * 100),
-             (int)(Double.parseDouble(args[5]) * 100),
-             (int)(Double.parseDouble(args[6]) * 100),
-             args[7],
-             args[8],
-             args[9]);
+    	// ** Careful to order the args correctly
+        this(args[0],									// maxCarSpaces
+             args[1],									// maxSmallCarSpaces
+             args[2],									// maxMotorCycleSpaces
+             args[3],									// maxQueueSize
+             args[4],									// seed
+             (int)(Double.parseDouble(args[5]) * 100),	// carProb
+             (int)(Double.parseDouble(args[6]) * 100),	// smallCarProb
+             (int)(Double.parseDouble(args[7]) * 100),	// mcProb
+             args[8],									// meanStay
+             args[9]);									// sdStay
+
     }
     
     //Sets up a CarPark with the given arguments
@@ -190,9 +194,8 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
         }
 		
         //Run the simulation 
-        sr = new SimulationRunner(carPark, sim, log);
         try {
-            sr.runSimulation();
+            runSimulation();
         } catch (Exception e) {
             e.printStackTrace();
             outputToTextArea(e.getMessage());
@@ -206,6 +209,51 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
     {
         simulationResultsTextArea.append(str + "\n");
     }
+    
+    
+	/**
+	 * Method to run the simulation from start to finish. Exceptions are propagated upwards from Vehicle,
+	 * Simulation and Log objects as necessary 
+	 * @throws VehicleException if Vehicle creation or operation constraints violated 
+	 * @throws SimulationException if Simulation constraints are violated 
+	 * @throws IOException on logging failures
+	 */
+	public void runSimulation() throws VehicleException, SimulationException, IOException {
+		this.log.initialEntry(this.carPark,this.sim);
+		for (int time=0; time<=Constants.CLOSING_TIME; time++) {
+			//queue elements exceed max waiting time
+			if (!this.carPark.queueEmpty()) {
+				this.carPark.archiveQueueFailures(time);
+			}
+			//vehicles whose time has expired
+			if (!this.carPark.carParkEmpty()) {
+				//force exit at closing time, otherwise normal
+				boolean force = (time == Constants.CLOSING_TIME);
+				this.carPark.archiveDepartingVehicles(time, force);
+			}
+			//attempt to clear the queue 
+			if (!this.carPark.carParkFull()) {
+				this.carPark.processQueue(time,this.sim);
+			}
+			// new vehicles from minute 1 until the last hour
+			if (newVehiclesAllowed(time)) { 
+				this.carPark.tryProcessNewVehicles(time,this.sim);
+			}
+			//Log progress 
+			this.log.logEntry(time,this.carPark);
+		}
+		this.log.finalise(this.carPark);
+	}
+
+	/**
+	 * Helper method to determine if new vehicles are permitted
+	 * @param time int holding current simulation time
+	 * @return true if new vehicles permitted, false if not allowed due to simulation constraints. 
+	 */
+	private boolean newVehiclesAllowed(int time) {
+		boolean allowed = (time >=1);
+		return allowed && (time <= (Constants.CLOSING_TIME - 60));
+	}    
     
     /**
      * This method is called from within the constructor to initialize the form.

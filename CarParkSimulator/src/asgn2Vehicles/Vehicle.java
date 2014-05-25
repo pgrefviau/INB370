@@ -49,11 +49,8 @@ public abstract class Vehicle {
 	//Transition vehicle to parked state (mutator) Parking starts on arrival or on exit from the queue, but time is set here
 	public void enterParkedState(int parkingTime, int intendedDuration) throws VehicleException
 	{
-		if(!isQueued() && !isNew())
-			throw new VehicleException("Cannot transition to parked state: the vehicule must be in Queud or New state");
-		
 		if(isParked() || hasBeenParked)
-			throw new VehicleException("Vehicle currently is or already has been in parked state");
+			throw new VehicleException("Vehicle currently is or already has been parked");
 		
 		if(parkingTime < 0)
 			throw new VehicleException("Parking time value must be positive");
@@ -82,16 +79,13 @@ public abstract class Vehicle {
 	}
 	
 	//Transition vehicle from parked state (mutator)
-	public void	exitParkedState(int departureTime) throws VehicleException
+	public void exitParkedState(int departureTime) throws VehicleException
 	{
 		if(!isParked())
 			throw new VehicleException("Cannot transition from parked state: the vehicule is not in that state");
 		
-		
-		// it is reverse departureTime NOT departureTime (sheng)
 		if(departureTime < this.parkingTime)
 			throw new VehicleException("The departure time cannot be before the parking time");
-		
 		
 		this.state = VehiculeState.ARCHIVED;
 		this.departureTime = departureTime;
@@ -104,9 +98,11 @@ public abstract class Vehicle {
 	{
 		if(!isQueued())
 			throw new VehicleException("Cannot transition from queued state: the vehicule is not in that state");
-		// you forgot if
+	
 		if(exitTime < this.arrivalTime)
 			throw new VehicleException("The departure time cannot be before the parking time");
+		
+		this.state = VehiculeState.ARCHIVED;
 	}
 	
 	//Simple getter for the arrival time
@@ -167,9 +163,26 @@ public abstract class Vehicle {
 	@Override
 	public String toString() 
 	{
-		return super.toString();
+            
+            StringBuilder sb = new StringBuilder();
+            addFormatedString(sb, "Vehicle ID: ", this.getVehID());
+            addFormatedString(sb, "Arrival time: ", String.valueOf(this.getArrivalTime()));
+            
+            return sb.toString();
 	}
 	
+        private void addFormatedString(StringBuilder sb, String str, String value)
+        {
+             addFormatedString(sb, str, value, true);
+        }
+        
+        private void addFormatedString(StringBuilder sb, String str, String value, boolean condition)
+        {
+            String newLine = "\n";
+            String appendedStr = condition ? (str + value + newLine) : "";
+            sb.append(appendedStr);
+        }
+        
 	//Boolean status indicating whether vehicle was ever parked Will return false for vehicles in queue or turned away
 	public boolean	wasParked()
 	{

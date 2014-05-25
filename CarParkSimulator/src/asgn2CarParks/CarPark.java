@@ -136,21 +136,27 @@ public class CarPark{
 	//Method to remove vehicle from the queue after which it will be parked or removed altogether.
 	public void	exitQueue(Vehicle v, int exitTime) throws SimulationException, VehicleException
 	{
-		if(v.isParked() || !v.isQueued())
-			throw new VehicleException("The vehicle cannot exit the queue since it's not in the queud state");
+		if(!v.isQueued())
+			throw new VehicleException("The vehicle cannot exit the queue since it's not in the queued state");
 		
 		if(exitTime <= v.getArrivalTime()  )
 			throw new VehicleException("The vehicle's departure time has to be strictly greater than its arrival time");
 		
 		Iterator<Vehicle> it = queue.iterator();
+		
+		boolean vehicleFound = false;
 		while(it.hasNext())
 		{
 			 if(it.next().equals(v))
 			 {
 				 it.remove();
-				 return;
+				 vehicleFound = true;
 			 }
 		}
+		
+		
+		if(!vehicleFound)
+			throw new VehicleException("The vehicle to remove was not found in the queue");
 		
 		v.exitQueuedState(exitTime);
 	}
