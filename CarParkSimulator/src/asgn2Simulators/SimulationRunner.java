@@ -24,12 +24,6 @@ import asgn2Exceptions.VehicleException;
  */
 public class SimulationRunner {
 	
-    
-        private CarPark carPark;
-        private Simulator sim;
-        private Log log;
-        private SimulationRunner sr;
-	
         private static GUISimulator guiSimulator;
         
 	private static enum ArgTypes {INTEGER, DOUBLE};
@@ -46,10 +40,7 @@ public class SimulationRunner {
             ArgTypes.DOUBLE, 	// meanStay
             ArgTypes.DOUBLE 	// sdStay
         };
-	     
-	
 
-	
 	private static boolean areArgumentsValid(String[] args)
 	{
             if(args.length != validArgTypesMapping.length)

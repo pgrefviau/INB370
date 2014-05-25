@@ -4,6 +4,7 @@ package asgn2Simulators;
 import asgn2CarParks.CarPark;
 import asgn2Exceptions.SimulationException;
 import asgn2Exceptions.VehicleException;
+import java.awt.TextArea;
 
 import java.awt.TextField;
 import java.io.IOException;
@@ -12,6 +13,8 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.XYPlot;
 
 public class GUISimulator extends  javax.swing.JFrame implements ChangeListener  {
 
@@ -21,6 +24,8 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
     private Log log;
     private SimulationRunner sr;
     
+    private TextArea simulationResultsTextArea = new TextArea();
+    private ChartPanel simulationResusltsGraphPanel;
     
     public GUISimulator(String maxCarSpacesFieldValue,
                         String maxSmallCarSpacesFieldValue,
@@ -40,6 +45,10 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
         this.smallCarArrivalProbSlider.addChangeListener(this);
         this.motorCycleArrivalProbSlider.addChangeListener(this);
         
+        simulationResusltsGraphPanel = new ChartPanel();
+        
+        resultsTabPane.addTab("Text", simulationResultsTextArea);
+        resultsTabPane.addTab("Graph", simulationResusltsGraphPanel);
         
         maxCarSpacesField.setText(String.valueOf(Constants.DEFAULT_MAX_CAR_SPACES));
         maxSmallCarSpacesField.setText(String.valueOf(Constants.DEFAULT_MAX_SMALL_CAR_SPACES));
@@ -183,15 +192,18 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
             return;
         
         outputToTextArea("Launching simulation...");
-
+        deactivateAllInputs();
+        
         try {
             carPark =  setUpCarParkFromUiFields();
             sim = setUpSimulatorFromUFields();
             log = new Log();
         } catch (IOException | SimulationException e1) {
             e1.printStackTrace();
-            outputToTextArea(e1.getMessage());    
+            outputToTextArea(e1.getMessage());
+            activateAllInputs();
         }
+        
 		
         //Run the simulation 
         try {
@@ -199,6 +211,9 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
         } catch (Exception e) {
             e.printStackTrace();
             outputToTextArea(e.getMessage());
+        }
+        finally{
+            activateAllInputs();
         }
 
         
@@ -210,6 +225,29 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
         simulationResultsTextArea.append(str + "\n");
     }
     
+    private void deactivateAllInputs()
+    {
+        setAllInputsActivationState(false);
+    }
+    
+    private void activateAllInputs()
+    {
+        setAllInputsActivationState(true);
+    }
+    
+    private void setAllInputsActivationState(boolean isEnabled)
+    {
+        carArrivalProbSlider.setEnabled(isEnabled);
+        launchSimBtn.setEnabled(isEnabled);
+        maxCarSpacesField.setEnabled(isEnabled);
+        maxMotorCycleSpacesField.setEnabled(isEnabled);
+        maxSmallCarSpacesField.setEnabled(isEnabled);
+        maxQueueLengthField.setEnabled(isEnabled);
+        meanStayDurationField.setEnabled(isEnabled);
+        motorCycleArrivalProbSlider.setEnabled(isEnabled);
+        simulationSeedField.setEnabled(isEnabled);
+        smallCarArrivalProbSlider.setEnabled(isEnabled);
+    }
     
 	/**
 	 * Method to run the simulation from start to finish. Exceptions are propagated upwards from Vehicle,
@@ -220,7 +258,9 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
 	 */
 	public void runSimulation() throws VehicleException, SimulationException, IOException {
 		this.log.initialEntry(this.carPark,this.sim);
-		for (int time=0; time<=Constants.CLOSING_TIME; time++) {
+		this.simulationResusltsGraphPanel.resetSimulationData();
+                
+                for (int time=0; time<=Constants.CLOSING_TIME; time++) {
 			//queue elements exceed max waiting time
 			if (!this.carPark.queueEmpty()) {
 				this.carPark.archiveQueueFailures(time);
@@ -241,8 +281,17 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
 			}
 			//Log progress 
 			this.log.logEntry(time,this.carPark);
+                        this.simulationResusltsGraphPanel.addDataForGivenTimePoint
+                        (
+                            time, 
+                            carPark.getNumCars(), 
+                            carPark.getNumSmallCars(), 
+                            carPark.getNumMotorCycles(), 
+                            carPark.getNumCars() + carPark.getNumSmallCars() + carPark.getNumMotorCycles()
+                        );
 		}
 		this.log.finalise(this.carPark);
+                this.simulationResusltsGraphPanel.generateFinalChartFromData();
 	}
 
 	/**
@@ -286,15 +335,16 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
         meanStayDurationField = new javax.swing.JTextField();
         launchSimBtn = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        simulationResultsTextArea = new javax.swing.JTextArea();
         standardStayLbl = new javax.swing.JLabel();
         standardStayDurationField = new javax.swing.JTextField();
         carProbDisplay = new javax.swing.JTextField();
         motorCycleProbDisplay = new javax.swing.JTextField();
         smallCarProbDisplay = new javax.swing.JTextField();
+        resultsTabPane = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(550, 750));
+        setPreferredSize(new java.awt.Dimension(575, 750));
 
         maxCarSpacesLbl.setText("Maximum car spaces:");
 
@@ -341,10 +391,6 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
             }
         });
 
-        simulationResultsTextArea.setColumns(20);
-        simulationResultsTextArea.setRows(5);
-        jScrollPane1.setViewportView(simulationResultsTextArea);
-
         standardStayLbl.setText("Standard stay duration:");
 
         standardStayDurationField.setToolTipText("Standard Stay Duration");
@@ -378,19 +424,19 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(meanStayDurationField, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(standardStayDurationField, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 264, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1)
-                            .addComponent(motorCycleArrivalProbSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
-                            .addComponent(smallCarArrivalProbSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(carArrivalProbSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jSeparator1)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(resultsTabPane, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(motorCycleArrivalProbSlider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+                            .addComponent(smallCarArrivalProbSlider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(carArrivalProbSlider, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
                                 .addComponent(launchSimBtn))
-                            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jSeparator2)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -470,9 +516,9 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
                     .addComponent(standardStayDurationField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(1, 1, 1)
+                .addComponent(resultsTabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(launchSimBtn)
                 .addContainerGap())
         );
@@ -481,16 +527,16 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 450, Short.MAX_VALUE)
+            .addGap(0, 500, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addGap(0, 25, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 25, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 682, Short.MAX_VALUE)
+            .addGap(0, 711, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
@@ -511,7 +557,6 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
     private javax.swing.JSlider carArrivalProbSlider;
     private javax.swing.JTextField carProbDisplay;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JButton launchSimBtn;
@@ -528,7 +573,7 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
     private javax.swing.JSlider motorCycleArrivalProbSlider;
     private javax.swing.JTextField motorCycleProbDisplay;
     private javax.swing.JLabel motorCyleArrivalProbLbl;
-    private javax.swing.JTextArea simulationResultsTextArea;
+    private javax.swing.JTabbedPane resultsTabPane;
     private javax.swing.JTextField simulationSeedField;
     private javax.swing.JLabel simulationSeedLbl;
     private javax.swing.JLabel smallCarArrivalProbLbl;

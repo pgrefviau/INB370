@@ -472,7 +472,7 @@ public class CarParkTests {
 	@Test
 	public void testGetNumMotorCycles() throws VehicleException, SimulationException {
 		Random rand = new Random();
-		int randomNumberOfMotorCycles = rand.nextInt(Constants.DEFAULT_MAX_SMALL_CAR_SPACES-1) + Constants.DEFAULT_MAX_MOTORCYCLE_SPACES ;
+		int randomNumberOfMotorCycles = rand.nextInt(Constants.DEFAULT_MAX_SMALL_CAR_SPACES-1) + 1;
 		
 		assertTrue(carPark.carParkEmpty());
 		
@@ -487,8 +487,20 @@ public class CarParkTests {
 
 
 	@Test
-	public void testGetNumSmallCars() {
+	public void testGetNumSmallCars() throws SimulationException, VehicleException {
 
+		Random rand = new Random();
+		int randomNumberOfSmallCars = rand.nextInt(Constants.DEFAULT_MAX_CAR_SPACES-1) + 1;
+		
+		assertTrue(carPark.carParkEmpty());
+		
+		for(int i =0; i < randomNumberOfSmallCars; i++)
+		{
+			Vehicle v = new Car(getNextId(), 1, true);
+			carPark.parkVehicle(v, v.getArrivalTime(), Constants.MINIMUM_STAY);
+		}
+		
+		assertEquals(randomNumberOfSmallCars, carPark.getNumSmallCars());
 	}
 
 	
@@ -505,8 +517,20 @@ public class CarParkTests {
 
 
 	@Test
-	public void testNumVehiclesInQueue() {
-	
+	public void testNumVehiclesInQueue() throws SimulationException, VehicleException {
+		
+		final int queueSize = Constants.DEFAULT_MAX_QUEUE_SIZE;
+		carPark = new CarPark(0, 0, 0, queueSize);
+		
+		Random rand = new Random();
+		int numberOfVehiclesToAdd = rand.nextInt(queueSize - 1) + 1;
+
+		generateNewVehicles(numberOfVehiclesToAdd);
+		
+		for(int i =0; i < numberOfVehiclesToAdd; i++)		
+			carPark.enterQueue(getNextVehicle());
+		
+		assertEquals(numberOfVehiclesToAdd, carPark.numVehiclesInQueue());
 	}
 
 
@@ -532,15 +556,46 @@ public class CarParkTests {
 
 
 	@Test
-	public void testProcessQueue() {
+	public void testProcessQueue() throws SimulationException, VehicleException {
 		
-	
+		carPark = new CarPark(1,0,0,2);
+		Vehicle v1 = new Car(getNextId(), getNextVehicleArrivalTime(), false);
+		Vehicle v2 = new Car(getNextId(), getNextVehicleArrivalTime(), false);
+		
+		carPark.enterQueue(v1);
+		carPark.enterQueue(v2);
+		assertTrue(v1.isQueued());
+		assertTrue(v2.isQueued());
+		assertFalse(carPark.queueEmpty());
+		
+		carPark.processQueue(v2.getArrivalTime() + 1, sim);		
+		assertTrue(v1.isParked());
+		assertTrue(v2.isQueued());
+		assertFalse(carPark.queueEmpty());
 	}
 
 
 	@Test
-	public void testQueueEmpty() {
+	public void testQueueEmpty() throws SimulationException, VehicleException {
 		
+		final int queueSize = Constants.DEFAULT_MAX_QUEUE_SIZE;
+		carPark = new CarPark(0, 0, 0, queueSize);
+		generateNewVehicles(queueSize);
+		
+		assertTrue(carPark.queueEmpty());
+		
+		Vehicle v = null;
+		for(int i = 0; i < queueSize; i++)
+		{
+			v = getNextVehicle();
+			carPark.enterQueue(v);
+			assertFalse(carPark.queueEmpty());
+		}
+		
+		if(v != null)
+			carPark.archiveQueueFailures(v.getArrivalTime() + Constants.MAXIMUM_QUEUE_TIME);
+		
+		assertTrue(carPark.queueEmpty());
 	}
 
 
@@ -562,7 +617,8 @@ public class CarParkTests {
 
 	@Test
 	public void testSpacesAvailable() {
-	
+		
+		//carPark.spacesAvailable(v);
 	}
 
 
@@ -575,8 +631,7 @@ public class CarParkTests {
 	@Test
 	public void testTryProcessNewVehicles() {
 	
-		
-		//carPark.tryProcessNewVehicles(time, sim);
+	
 	}
 
 
