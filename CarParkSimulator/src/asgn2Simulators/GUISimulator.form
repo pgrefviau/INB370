@@ -29,12 +29,12 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="500" max="32767" attributes="0"/>
+          <EmptySpace min="0" pref="550" max="32767" attributes="0"/>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="0" pref="25" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="25" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
           </Group>
       </Group>
@@ -87,7 +87,7 @@
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Component id="resultsTabPane" alignment="0" max="32767" attributes="0"/>
-                              <Component id="motorCycleArrivalProbSlider" alignment="0" pref="430" max="32767" attributes="0"/>
+                              <Component id="motorCycleArrivalProbSlider" alignment="0" pref="530" max="32767" attributes="0"/>
                               <Component id="smallCarArrivalProbSlider" alignment="0" max="32767" attributes="0"/>
                               <Component id="carArrivalProbSlider" alignment="0" max="32767" attributes="0"/>
                               <Component id="jSeparator1" alignment="0" max="32767" attributes="0"/>
@@ -164,10 +164,10 @@
                       <Component id="simulationSeedLbl" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="simulationSeedField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="carProbDisplay" min="-2" max="-2" attributes="0"/>
                       <Component id="carArrivalProbLbl" min="-2" max="-2" attributes="0"/>
+                      <Component id="carProbDisplay" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="carArrivalProbSlider" min="-2" max="-2" attributes="0"/>
@@ -278,6 +278,7 @@
         </Component>
         <Component class="javax.swing.JSlider" name="carArrivalProbSlider">
           <Properties>
+            <Property name="paintLabels" type="boolean" value="true"/>
             <Property name="paintTicks" type="boolean" value="true"/>
           </Properties>
         </Component>
@@ -323,11 +324,6 @@
             <Property name="toolTipText" type="java.lang.String" value="Standard Stay Duration"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="carProbDisplay">
-          <Properties>
-            <Property name="editable" type="boolean" value="false"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JTextField" name="motorCycleProbDisplay">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
@@ -342,6 +338,11 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
         </Container>
+        <Component class="javax.swing.JTextField" name="carProbDisplay">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>
