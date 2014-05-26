@@ -23,6 +23,7 @@ public class CarTests {
 	private int parkingTime = firstCarParkingTime;
 	private int intendedDuration = Constants.MINIMUM_STAY + (int)(Math.random());
 	private int departureTime = parkingTime +intendedDuration ;
+	private int exitTime = 60; 
 	
 	@Before
 	public void creatACarObject() throws VehicleException{
@@ -82,36 +83,36 @@ public class CarTests {
 	
 	
 	/**
-	 * @method enterParkedState()
+	 * @method testCarIncorrectIsInQueued_enterParedkState()
 	 * @param parkingTime
 	 * @param intendedDuration
 	 * @throws VehicleException if the car is already Parked.
 	 */
 	@Test(expected = VehicleException.class)
-	public void carIsInQueued_enterParedkState() throws VehicleException{
+	public void testCarIncorrectIsInQueued_enterParedkState() throws VehicleException{
 		car.enterParkedState(getFirstCarParkingTime(), intendedDuration);
 		car.enterParkedState(getNextCarParkingTime(), intendedDuration);
 		
 	}
 	
 	/**
-	 * @method 
+	 * @method testCarIncorrectParkingTimeLessThanZero()
 	 * @param parkingTime
 	 * @param intendedDuration
 	 * @throws VehicleException if parkingTime is Less Than Zero
 	 */
 	@Test(expected = VehicleException.class)
-	public void parkingTimeLessThanZero() throws VehicleException{
+	public void testCarIncorrectParkingTimeLessThanZero() throws VehicleException{
 		car.enterParkedState(-1,intendedDuration);
 	}
 	/**
-	 * @param parkingTime
+	 * @param testIncorrectCarIntendedDurationLessThanMinimumStay
 	 * @param intendedDuration
 	 * @throws VehicleException if intendedDuration is Less Than the Minimum
 	 * Stay(20)
 	 */
 	@Test(expected = VehicleException.class)
-	public void intendedDurationLessThanMinimumStay() throws VehicleException{
+	public void testIncorrectCarIntendedDurationLessThanMinimumStay() throws VehicleException{
 		car.enterParkedState(2,intendedDuration/2-(int)(Math.random()));
 	}
 ///////////////////////////////////////////////////////////
@@ -123,13 +124,13 @@ public class CarTests {
 	////////////////////////////////////////////////////
 	
 	/**
-	 * @method enterQueuedState();
+	 * @method TestIncorrectCarIsParked_enterQueuedState();
 	 * @param parkingTime
 	 * @param intendedDuration
 	 * @throws VehicleException if the car is Parked
 	 */
 	@Test(expected = VehicleException.class)
-	public void carIsParked_enterQueuedState() throws VehicleException{
+	public void TestIncorrectCarIsParked_enterQueuedState() throws VehicleException{
 		
 		car.enterParkedState(getFirstCarParkingTime(), intendedDuration);
 		car.enterQueuedState();
@@ -137,13 +138,11 @@ public class CarTests {
 	
 	
 	/**
-	 * @method enterQueuedState();
-	 * @param parkingTime
-	 * @param intendedDuration
+	 * @method testIncorrectCarIsAlreadyInQueued();
 	 * @throws VehicleException if the car is Queued
 	 */
 	@Test(expected = VehicleException.class)
-	public void carIsInQueued_enterQueuedState() throws VehicleException{
+	public void testIncorrectCarIsAlreadyInQueued() throws VehicleException{
 		car.enterQueuedState();
 		car.enterQueuedState();
 	}
@@ -157,23 +156,23 @@ public class CarTests {
 	
 	////////////////////////////////////////////////
 	/**
-	 * @method existParkedState
+	 * @method testCarIncorrectISNOTParked()
 	 * @param departureTime
 	 * @throws VehicleException if Car is Not Park or Not Queued
 	 */
 	@Test(expected = VehicleException.class)
-	public void carISNOTParked() throws VehicleException{
+	public void testCarIncorrectISNOTParked() throws VehicleException{
 		car.exitParkedState(departureTime);
 	
 	}
 	/**
-	 * @method existParkedState
+	 * @method testCarIncorrectIsInAQueued() 
 	 * @param departureTime
 	 * @throws VehicleException if car is in a Queued
 	 */
 	
 	@Test(expected = VehicleException.class)
-	public void carIsInAQueued() 
+	public void testCarIncorrectIsInAQueued() 
 			throws VehicleException{
 		car.enterQueuedState();
 		car.exitParkedState(departureTime);
@@ -181,12 +180,12 @@ public class CarTests {
 	}
 	
 	/**
-	 * @param departureTime
+	 * @param testCarIncorrectDepartureTimeLesserThanParkingTime()
 	 * @throws VehicleException if revised departure time 
 	 * is lesser than parking time
 	 */
 	@Test(expected = VehicleException.class)
-	public void departureTimeLesserThanParkingTime() 
+	public void testCarIncorrectDepartureTimeLesserThanParkingTime() 
 			throws VehicleException{
 		getFirstCarParkingTime();
 		getNextCarParkingTime();
@@ -248,14 +247,15 @@ public class CarTests {
 	
 
 	
-//	@Test
-//	public void testCarExitQueuedState() throws VehicleException{
-//		assertFalse(car.isQueued());
-//		car.enterQueuedState();
-//		car.exitQueuedState(60);
-//		assertEquals(car.exitQueuedState(), 60);
-//	}
-//	
+	@Test
+	public void testCarExitQueuedState() throws VehicleException{
+		assertFalse(car.isQueued());
+		car.enterQueuedState();
+		assertTrue(car.isQueued());
+		car.exitQueuedState(car.getArrivalTime()+1);
+		assertFalse(car.isQueued());
+	}
+	
 
 	
 	@Test
@@ -292,6 +292,14 @@ public class CarTests {
 		assertTrue(car.isParked());
 	}
 
+	@Test
+	public void testCarIsNotParked() throws VehicleException{
+		
+		assertFalse(car.isParked());
+		car.enterQueuedState();
+		car.exitQueuedState(60);
+		assertFalse(car.isParked());
+	}
 	
 	@Test
 	public void testCarIsQueued() throws VehicleException{
@@ -300,6 +308,15 @@ public class CarTests {
 		car.enterQueuedState();
 		assertTrue(car.isQueued());
 	}
+	
+	@Test
+	public void testCarIsNotQueued() throws VehicleException{
+		
+		assertFalse(car.isQueued());
+		car.enterParkedState(firstCarParkingTime, intendedDuration);
+		assertFalse(car.isQueued());
+	}
+	
 	
 	@Test
 	public void testCarIsSatisfied() throws VehicleException{
@@ -311,64 +328,75 @@ public class CarTests {
 	@Test
 	public void testCarIsDissatisfied() throws VehicleException{
 		
-		//assertFalse(car1.isSatisfied());
-		//assertFalse(car2.isSatisfied());
+
 		
-		//car.enterQueuedState();
-		//assertFalse(car1.isSatisfied());
+		car.enterQueuedState();
+		assertFalse(car.isSatisfied());
 		
-		//car1.exitQueuedState();
-		//assertFalse(car1.isSatisfied());
+		car.exitQueuedState(60);
+		assertFalse(car.isSatisfied());
 		
-		//car2.enterParkedState(firstCarParkingTime, intendedDuration)
-		//assertTrue(car2.isSatisfied());
+		Car car2 = new Car("345", 67, false);
+		car2.enterParkedState(firstCarParkingTime, intendedDuration);
+		assertFalse(car.isSatisfied());
 		
-		//car2.exitParkedState(departureTime)
-		//assertTrue(car2.isSatisfied())
+		car2.exitParkedState(departureTime);
+		assertFalse(car.isSatisfied());
+	}
+	
+	
+	
+	@Test
+	public void testCarWasParked() throws VehicleException{
+		assertFalse(car.wasParked());
+		car.enterParkedState(firstCarParkingTime, intendedDuration);
+		assertTrue(car.wasParked());
+		car.exitParkedState(departureTime);
+		assertTrue(car.wasParked());
+	}
+	
+	
+	
+	@Test
+	public void testCarWasNotParked() throws VehicleException{
+		
+		assertFalse(car.wasParked());
+		car.enterQueuedState();
+		car.exitQueuedState(exitTime);
+		assertFalse(car.wasParked());
+	}
+	
+	
+	@Test
+	public void testCarWasQueued() throws VehicleException{
+		assertFalse(car.wasQueued());
+		
+		
+		car.enterQueuedState();
+		assertTrue(car.wasQueued());
+		car.exitQueuedState(exitTime);
+		assertTrue(car.wasQueued());
+		
+	}
+	
+	@Test
+	public void testCarWasNotQueued() throws VehicleException{
+		
+		assertFalse(car.wasQueued());
+		car.enterParkedState(firstCarParkingTime, intendedDuration);
+		
+		assertFalse(car.wasQueued());
 	}
 
 	
-//	
-//	/**
-//	 * @throws java.lang.Exception
-//	 */
-//	@Before
-//	public void setUp() throws Exception {
-//	}
-//
-//	/**
-//	 * @throws java.lang.Exception
-//	 */
-//	@After
-//	public void tearDown() throws Exception {
-//	}
-//
+
 	/**
 	 * Test method for {@link asgn2Vehicles.Car#toString()}.
 	 */
 	@Test
-	public void testToString() {
+	public void testCarToString() {
 		String result = "Vehicle ID: Sheng007\nArrival time: 60\n";
 		assertEquals(result, car.toString());
 	}
-//
-//	/**
-//	 * Test method for {@link asgn2Vehicles.Car#Car(java.lang.String, int, boolean)}.
-//	 */
-//	@Test
-//	public void testCar() {
-//		fail("Not yet implemented"); // TODO
-//	}
-//
-//	/**
-//	 * Test method for {@link asgn2Vehicles.Car#isSmall()}.
-//	 */
-//	@Test
-//	public void testIsSmall() {
-//		fail("Not yet implemented"); // TODO
-//	}
-
-	
-	
 	
 }
