@@ -3,9 +3,10 @@ package asgn2Tests;
 
 import java.util.Random;
 
+
 import org.junit.Test;
 import org.junit.Before;
-import org.junit.After;
+
 
 import asgn2Exceptions.VehicleException;
 import asgn2Simulators.Constants;
@@ -32,35 +33,6 @@ public class CarTests {
 	////////////////////////////////////////////////////
 	
 
-	
-	
-	/*
-	 * Throw exception if arrivalTime is < 0;
-	 */
-	
-	@Test(expected = VehicleException.class)
-	public  void arrivalTimeLesserZero() throws VehicleException{
-		
-		Car carTest1 = new Car(vehID, -1, false);
-	}
-	
-	
-	/*
-	 * Throw exception if arrivalTime = 0;
-	 */
-	
-	@Test(expected = VehicleException.class)
-	public  void arrivalTimeEqualsZero() throws VehicleException{
-	
-		Car carTest2 = new Car(vehID, 0, false);
-	}
-	
-
-//////////////////////////////////////////////////
-	/*
-	 * Boundary Conditions Testings
-	 */
-	
 	private int getFirstCarParkingTime(){
 		firstCarParkingTime = 10;
 		return firstCarParkingTime;
@@ -72,7 +44,34 @@ public class CarTests {
 		return firstCarParkingTime;
 	}
 	
+
+	
+	
+	
+
+	
+
+//////////////////////////////////////////////////
+	/*
+	 * Boundary Conditions Testings
+	 */
+	
+
+	
 	///////////////////////////////////////////////
+	
+	/*
+	 * Throw exception if arrivalTime is < 0;
+	 */
+	
+	@Test(expected = VehicleException.class)
+	public  void arrivalTimeLesserZero() throws VehicleException{
+		
+		Car carTest1 = new Car(vehID, -1, false);
+		Car carTest2 = new Car(vehID, 0, false);
+	}
+	
+	
 	/*
 	 * Throws VehicleException if the Car is already in a 
 	 * queued or parked state when the car Enters a Parked
@@ -213,14 +212,14 @@ public class CarTests {
 	
 	
 	/**
-	 * @method enterParkedState
+	 * @method testCarEnterParkedState
 	 * @param parkingTime
 	 * @param intendedDuration
 	 * 
 	 */
 	
 	@Test
-	public void testEnterParkedState() throws VehicleException{
+	public void testCarEnterParkedState() throws VehicleException{
 		
 		car.enterParkedState(parkingTime, intendedDuration);
 		assertEquals(car.getParkingTime(),parkingTime,intendedDuration);
@@ -389,10 +388,6 @@ public class CarTests {
 	}
 
 	
-
-	/**
-	 * Test method for {@link asgn2Vehicles.Car#toString()}.
-	 */
 	@Test
 	public void testCarToString() {
 		String result = "Vehicle ID: Sheng007\nArrival time: 60\n";
