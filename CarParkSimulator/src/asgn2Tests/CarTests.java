@@ -16,10 +16,9 @@ public class CarTests {
 	
 	private Car car ;
 	
-	
 	private String vehID = "Sheng007";
 	private int arrivalTime = 60;
-	private int firstCarParkingTime;
+	private int firstCarParkingTime = 10;
 	
 	private int parkingTime = firstCarParkingTime;
 	private int intendedDuration = Constants.MINIMUM_STAY + (int)(Math.random());
@@ -28,7 +27,6 @@ public class CarTests {
 	@Before
 	public void creatACarObject() throws VehicleException{
 		car = new Car(vehID,arrivalTime, true);
-		
 	}
 	////////////////////////////////////////////////////
 	
@@ -84,18 +82,6 @@ public class CarTests {
 	 *  is lesser than the minimum stay required
 	 */
 	
-	/**
-	 * @method enterParkedState()
-	 * @param parkingTime
-	 * @param intendedDuration
-	 * @throws VehicleException if the car is already Queued.
-	 */
-	@Test(expected = VehicleException.class)
-	public void carIsInParked_enterParedkState() throws VehicleException{
-		car.enterQueuedState();
-		car.enterParkedState(getFirstCarParkingTime(), intendedDuration);
-		
-	}
 	
 	
 	/**
@@ -207,38 +193,29 @@ public class CarTests {
 			throws VehicleException{
 		getFirstCarParkingTime();
 		getNextCarParkingTime();
-		if(parkingTime > departureTime)
-		car.exitParkedState(departureTime);
+		car.exitParkedState(car.getParkingTime()-1);
 		
 	}
 	
 	
 	//////////////////////////////////////////////////////////////////////
-	/*
-	 * To test Car's ID and Arrival Time
-	 */
-	
-	
+
 	
 	////////////////////////////////////////////////////
 
+
 	
-	@Test()
-	public void getCorrectCarID()throws VehicleException{
-	
+	@Test
+	public void testCarVehicle() throws VehicleException{
+		
 		Car car = new Car(vehID,arrivalTime,true);
 		assertEquals(car.getVehID(),(String)"Sheng007");
 	}
-
-
 	
-	/////////////////////////////////////////////
-	/*
-	 * To test the cars parking times and intended durations
-	 */
 	
-	//////////////////////////////////////////////
-
+	
+	
+	
 	/**
 	 * @method enterParkedState
 	 * @param parkingTime
@@ -246,19 +223,98 @@ public class CarTests {
 	 * 
 	 */
 	
+	@Test
+	public void testEnterParkedState() throws VehicleException{
+		
+		car.enterParkedState(parkingTime, intendedDuration);
+		assertEquals(car.getParkingTime(),parkingTime,intendedDuration);
+	}
+
+
+
+	@Test
+	public void testExitCarParkedStateTest() throws VehicleException{
+		
+		car.enterParkedState(firstCarParkingTime, intendedDuration);
+		car.exitParkedState(departureTime);
+		assertEquals(car.getDepartureTime(),departureTime);
+	}
+
+	
+	@Test
+	public void testCarEnterQueuedState() throws VehicleException{
+		
+		assertFalse(car.isQueued());
+		car.enterQueuedState();
+		assertTrue(car.isQueued());
+	}
+	
+
+	
 //	@Test
-//	public void enterParkedStateTest() throws VehicleException{
-//		
-//		car.enterParkedState(getFirstCarParkingTime(), intendedDuration);
-//		
-//		assertEquals(car.getParkingTime(),(int)parkingTime, car. (int) );
-//		
+//	public void testCarExitQueuedState() throws VehicleException{
+//		assertFalse(car.isQueued());
+//		car.enterQueuedState();
+//		car.exitQueuedState(60);
+//		assertEquals(car.exitQueuedState(), 60);
 //	}
+//	
 
+	
+	@Test
+	public void testCarGetArrivalTime() throws VehicleException{
+		assertEquals(car.getArrivalTime(), 60);
+	}
+	
 
+	@Test
+	public void testCarGetDepartureTime() throws VehicleException{
+		assertEquals(0,car.getDepartureTime());
+		car.enterParkedState(firstCarParkingTime, intendedDuration);
+		assertEquals(car.getDepartureTime(),parkingTime +intendedDuration);
+	}
+	
+	@Test
+	public void testCarGetParkingTime() throws VehicleException{
+		assertEquals(0,car.getParkingTime());
+		car.enterParkedState(firstCarParkingTime, intendedDuration);
+		assertEquals(car.getParkingTime(),parkingTime);
+	}
+	
+	
+	@Test
+	public void testCarGetVehcalID()throws VehicleException{
+		assertEquals("Sheng007",car.getVehID());
+	}
+	
+	@Test
+	public void testCarIsParked() throws VehicleException{
+		car.enterParkedState(firstCarParkingTime, intendedDuration);
+		assertTrue(car.isParked());
+	}
 
-
-
+	
+	@Test
+	public void testCarIsQueued() throws VehicleException{
+		
+		car.enterQueuedState();
+		assertTrue(car.isQueued());
+	}
+	
+	@Test
+	public void testCarIsSatisfied() throws VehicleException{
+		car.enterParkedState(firstCarParkingTime, intendedDuration);
+		assertTrue(car.isSatisfied());
+	}
+	
+	
+	@Test
+	public void testCarIsDissatisfied() throws VehicleException{
+		car.enterQueuedState();
+		car.exitQueuedState();
+		assertFalse(car.isSatisfied());
+	}
+	
 	
 	
 	
@@ -282,13 +338,14 @@ public class CarTests {
 //	public void tearDown() throws Exception {
 //	}
 //
-//	/**
-//	 * Test method for {@link asgn2Vehicles.Car#toString()}.
-//	 */
-//	@Test
-//	public void testToString() {
-//		fail("Not yet implemented"); // TODO
-//	}
+	/**
+	 * Test method for {@link asgn2Vehicles.Car#toString()}.
+	 */
+	@Test
+	public void testToString() {
+		String result = "Vehicle ID: Sheng007\nArrival time: 60\n";
+		assertEquals(result, car.toString());
+	}
 //
 //	/**
 //	 * Test method for {@link asgn2Vehicles.Car#Car(java.lang.String, int, boolean)}.
