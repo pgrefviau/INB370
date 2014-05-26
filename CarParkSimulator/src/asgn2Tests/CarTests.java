@@ -26,7 +26,7 @@ public class CarTests {
 	
 	@Before
 	public void creatACarObject() throws VehicleException{
-		car = new Car(vehID,arrivalTime, true);
+		car = new Car(vehID,arrivalTime, false);
 	}
 	////////////////////////////////////////////////////
 	
@@ -55,9 +55,6 @@ public class CarTests {
 	}
 	
 
-	
-
-	
 //////////////////////////////////////////////////
 	/*
 	 * Boundary Conditions Testings
@@ -289,6 +286,8 @@ public class CarTests {
 	
 	@Test
 	public void testCarIsParked() throws VehicleException{
+		
+		assertFalse(car.isParked());
 		car.enterParkedState(firstCarParkingTime, intendedDuration);
 		assertTrue(car.isParked());
 	}
@@ -297,6 +296,7 @@ public class CarTests {
 	@Test
 	public void testCarIsQueued() throws VehicleException{
 		
+		assertFalse(car.isQueued());
 		car.enterQueuedState();
 		assertTrue(car.isQueued());
 	}
@@ -310,18 +310,23 @@ public class CarTests {
 	
 	@Test
 	public void testCarIsDissatisfied() throws VehicleException{
-		car.enterQueuedState();
-		car.exitQueuedState();
-		assertFalse(car.isSatisfied());
+		
+		//assertFalse(car1.isSatisfied());
+		//assertFalse(car2.isSatisfied());
+		
+		//car.enterQueuedState();
+		//assertFalse(car1.isSatisfied());
+		
+		//car1.exitQueuedState();
+		//assertFalse(car1.isSatisfied());
+		
+		//car2.enterParkedState(firstCarParkingTime, intendedDuration)
+		//assertTrue(car2.isSatisfied());
+		
+		//car2.exitParkedState(departureTime)
+		//assertTrue(car2.isSatisfied())
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 //	
 //	/**
