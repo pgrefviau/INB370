@@ -45,12 +45,6 @@ public class CarTests {
 	}
 	
 
-	
-	
-	
-
-	
-
 //////////////////////////////////////////////////
 	/*
 	 * Boundary Conditions Testings
@@ -204,7 +198,11 @@ public class CarTests {
 	public void testCarVehicle() throws VehicleException{
 		
 		Car car = new Car(vehID,arrivalTime,true);
-		assertEquals(car.getVehID(),(String)"Sheng007");
+		assertEquals(car.getVehID(), "S" + (String)"Sheng007");
+		assertEquals(car.getArrivalTime(), arrivalTime);
+		assertEquals(car.isSmall(), true);
+		
+		
 	}
 	
 	
@@ -280,7 +278,10 @@ public class CarTests {
 	
 	@Test
 	public void testCarGetVehcalID()throws VehicleException{
-		assertEquals("Sheng007",car.getVehID());
+		car.getVehID();
+		String prefix = car.isSmall() ? "S" : "C";
+		
+		assertEquals(prefix + vehID,car.getVehID());
 	}
 	
 	@Test
@@ -386,12 +387,6 @@ public class CarTests {
 		
 		assertFalse(car.wasQueued());
 	}
-
 	
-	@Test
-	public void testCarToString() {
-		String result = "Vehicle ID: Sheng007\nArrival time: 60\n";
-		assertEquals(result, car.toString());
-	}
 	
 }

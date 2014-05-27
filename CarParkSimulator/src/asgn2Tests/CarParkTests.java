@@ -42,12 +42,6 @@ public class CarParkTests {
 		return rand.nextInt(ARRIVAL_TIME_MAX_INCREMENT) + 1;
 	}
 
-	// Get a random, valid arrival time for a vehicle
-	private  int getInitialVehicleArrivalTime()
-	{	
-		vehicleArrivalTime = getRandomArrivalTimeIncrement();
-		return vehicleArrivalTime;
-	}
 	
 	// Get valid arrival, subsequent, increasing arrival time for a vehicle 
 	private  int getNextVehicleArrivalTime()
@@ -63,11 +57,11 @@ public class CarParkTests {
 	}
 	
 	// Generate a random vehicle (car, small car or motorcycle) with valid and consistent attributes
-	private Vehicle generateRandomVehicle(boolean isFirstVehicle) throws VehicleException
+	private Vehicle generateRandomVehicle() throws VehicleException
 	{
 		Random rand = new Random();
 		String vehiculeId = getNextId(); 
-		int arrivalTime = isFirstVehicle ? getInitialVehicleArrivalTime() : getNextVehicleArrivalTime() ;
+		int arrivalTime =  getNextVehicleArrivalTime() ;
 		
 		if(rand.nextBoolean())
 			return new Car(vehiculeId, arrivalTime, rand.nextBoolean());
@@ -91,9 +85,9 @@ public class CarParkTests {
 		
 		try 
 		{
-			vehiclePool.add(generateRandomVehicle(true));
+			vehiclePool.add(generateRandomVehicle());
 			for(int i = 0; i < poolSize - 1 ; i++)
-				vehiclePool.add(generateRandomVehicle(false));
+				vehiclePool.add(generateRandomVehicle());
 			
 			
 		} catch (VehicleException e) {
@@ -616,9 +610,44 @@ public class CarParkTests {
 
 
 	@Test
-	public void testSpacesAvailable() {
+	public void testSpacesAvailable() throws VehicleException, SimulationException {
 		
-		//carPark.spacesAvailable(v);
+		final int motorCycleSpots = 1;
+		final int smallCarSpotsSpots = 2;
+		final int carSpotsSpots = 3;
+		final int totalAllowedMotorCycles = motorCycleSpots + smallCarSpotsSpots;
+		final int totalAllowedSmallCars = smallCarSpotsSpots + carSpotsSpots;
+		final int totalAllowedCars= carSpotsSpots;
+		
+		carPark = new CarPark(carSpotsSpots, smallCarSpotsSpots, motorCycleSpots, 0);
+		
+
+		Car smallCar = new Car(getNextId(), getNextVehicleArrivalTime(), true);
+		carPark.parkVehicle(smallCar, 0, Constants.MINIMUM_STAY);
+		
+		boolean spaceAvailable = true;
+		do
+		{
+			MotorCycle mc = new MotorCycle(getNextId(), getNextVehicleArrivalTime());
+			spaceAvailable = carPark.spacesAvailable(mc);
+			assertEquals(spaceAvailable, carPark.getNumMotorCycles() !=  totalAllowedMotorCycles - carPark.getNumSmallCars() );
+			if(spaceAvailable)
+				carPark.parkVehicle(mc, 0, Constants.MINIMUM_STAY);
+		} while(spaceAvailable);
+		
+		
+		Car car = new Car(getNextId(), getNextVehicleArrivalTime(), false);
+		carPark.parkVehicle(car, 0, Constants.MINIMUM_STAY);
+		
+		do
+		{
+			smallCar = new Car(getNextId(), getNextVehicleArrivalTime(), true);
+			spaceAvailable = carPark.spacesAvailable(smallCar);
+			assertEquals(spaceAvailable, carPark.getNumSmallCars() !=  totalAllowedSmallCars - carPark.getNumCars() );
+			if(spaceAvailable)
+				carPark.parkVehicle(smallCar, 0, Constants.MINIMUM_STAY);
+		} while(spaceAvailable);
+	
 	}
 
 
@@ -629,9 +658,30 @@ public class CarParkTests {
 
 
 	@Test
-	public void testTryProcessNewVehicles() {
+	public void testTryProcessNewVehicles() throws SimulationException, VehicleException {
 	
-	
+		// Modified simulator to guarantee car arrival at each cycle
+		sim = new Simulator(Constants.DEFAULT_SEED, Constants.DEFAULT_INTENDED_STAY_MEAN, Constants.DEFAULT_INTENDED_STAY_SD, 1, 0, 0);
+		carPark = new CarPark(1,0,0,1);
+
+		assertTrue(carPark.carParkEmpty());
+		assertTrue(carPark.queueEmpty());
+		
+		int time = 1;
+		carPark.tryProcessNewVehicles(time++, sim);
+		
+		assertFalse(carPark.carParkEmpty());
+		assertTrue(carPark.queueEmpty());
+		
+		carPark.tryProcessNewVehicles(time++, sim);
+		
+		assertFalse(carPark.carParkEmpty());
+		assertFalse(carPark.queueEmpty());
+		
+		carPark.tryProcessNewVehicles(time++, sim);
+		
+		assertFalse(carPark.carParkEmpty());
+		assertFalse(carPark.queueEmpty());
 	}
 
 

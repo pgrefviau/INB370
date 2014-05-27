@@ -368,7 +368,6 @@ public class CarPark{
 		if(v instanceof MotorCycle)
 			return hasPlaceLeftForMotorCycles();
 
-		// TODO: Throw exception ?
 		return false;
 	}
 	
