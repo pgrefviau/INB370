@@ -14,8 +14,14 @@ Sheng Dai, n7544537
 
 ----- Main method -----
 
-The main method is stil contained in SimulationRunner in the asgn2Simulators package. 
+The main method is stil contained in SimulationRunner in the asgn2Simulators package. To run it from a commande line (from the CarParkSimulator directory), simply input "java -classpath bin;jcommon-1.0.21.jar;jfreechart-1.0.17.jar asgn2Simulators.SimulationRunner" where "java" is the location of your JRE. Make sure that the librairies  "jcommon-1.0.21.jar" and "freechart-1.0.17.jar" are in the current directory. 
 
------ Extra -----
+To add arguments, just input the 10 required values after the previously mentionned instruction, with a space between each. Use the following order :
+
+maxCarSpaces maxSmallCarSpaces maxMotorCycleSpaces maxQueueSize seed carProb smallCarProb mcProb	meanStay sdStay
+
+Hit enter to launch the program.
+
+----- Other -----
 
 Both equals and hashCode methods have been overidden for the vehicule class. Email from Jim said it shouldn't be a problem. 

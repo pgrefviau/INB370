@@ -42,8 +42,10 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
     {
         
     	
-    	this.setMinimumSize(new Dimension(800, 400));
+    	
         initComponents();
+        
+        this.setMinimumSize(new Dimension(800, 400));
         
         simulationResusltsGraphPanel = new ChartPanel();
         

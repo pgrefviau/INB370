@@ -441,12 +441,6 @@ public class CarParkTests {
 
 
 	@Test
-	public void testFinalState() {
-		
-	}
-
-
-	@Test
 	public void testGetNumCars() throws VehicleException, SimulationException {
 		Random rand = new Random();
 		int randomNumberOfCars = rand.nextInt(Constants.DEFAULT_MAX_CAR_SPACES-1) + 1;
@@ -497,17 +491,6 @@ public class CarParkTests {
 		assertEquals(randomNumberOfSmallCars, carPark.getNumSmallCars());
 	}
 
-	
-	@Test
-	public void testGetStatus() {
-
-	}
-
-
-	@Test
-	public void testInitialState() {
-
-	}
 
 
 	@Test
@@ -612,9 +595,9 @@ public class CarParkTests {
 	@Test
 	public void testSpacesAvailable() throws VehicleException, SimulationException {
 		
-		final int motorCycleSpots = 1;
-		final int smallCarSpotsSpots = 2;
-		final int carSpotsSpots = 3;
+		final int motorCycleSpots = 2;
+		final int smallCarSpotsSpots = 4;
+		final int carSpotsSpots = 8;
 		final int totalAllowedMotorCycles = motorCycleSpots + smallCarSpotsSpots;
 		final int totalAllowedSmallCars = smallCarSpotsSpots + carSpotsSpots;
 		final int totalAllowedCars= carSpotsSpots;
@@ -643,17 +626,11 @@ public class CarParkTests {
 		{
 			smallCar = new Car(getNextId(), getNextVehicleArrivalTime(), true);
 			spaceAvailable = carPark.spacesAvailable(smallCar);
-			assertEquals(spaceAvailable, carPark.getNumSmallCars() !=  totalAllowedSmallCars - carPark.getNumCars() );
+			assertEquals(spaceAvailable, carPark.getNumMotorCycles() + carPark.getNumSmallCars() - (motorCycleSpots + smallCarSpotsSpots) + carPark.getNumCars() != totalAllowedCars);
 			if(spaceAvailable)
 				carPark.parkVehicle(smallCar, 0, Constants.MINIMUM_STAY);
 		} while(spaceAvailable);
 	
-	}
-
-
-	@Test
-	public void testToString() {
-		
 	}
 
 

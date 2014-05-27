@@ -167,20 +167,25 @@ public abstract class Vehicle {
             addFormatedString(sb, "Vehicle ID: " + this.getVehID() + newLine);
             addFormatedString(sb, "Arrival time: " + String.valueOf(this.getArrivalTime() + newLine));
             addFormatedString(sb, "Vehicle was queued" + newLine, "Vehicle was not queued" + newLine, this.wasQueued());
+            addFormatedString(sb, "Queuing time: " + (getParkingTime() + getArrivalTime()) + newLine, "",  this.wasQueued());
+            addFormatedString(sb, "Vehicle was parked" + newLine, "Vehicle was not parked" + newLine, this.wasParked());
+            addFormatedString(sb, "Parking time: " + getParkingTime() + newLine, "",  this.wasParked());
+            addFormatedString(sb, "Customer is satisifed" + newLine, "Customer is dissatisfied" + newLine, this.isSatisfied());
+            addFormatedString(sb, "Departure time: " + getDepartureTime() + newLine, "" + newLine, this.wasParked() && !this.isParked());
             
             return sb.toString();
 	}
 	
-        private void addFormatedString(StringBuilder sb, String value)
-        {
-             addFormatedString(sb, value, "", true);
-        }
-        
-        private void addFormatedString(StringBuilder sb, String trueValue, String falseValue, boolean condition)
-        {
-            String appendedStr = condition ? ( trueValue) : ( falseValue );
-            sb.append(appendedStr);
-        }
+    private void addFormatedString(StringBuilder sb, String value)
+    {
+         addFormatedString(sb, value, "", true);
+    }
+    
+    protected void addFormatedString(StringBuilder sb, String trueValue, String falseValue, boolean condition)
+    {
+        String appendedStr = condition ? ( trueValue) : ( falseValue );
+        sb.append(appendedStr);
+    }
         
 	//Boolean status indicating whether vehicle was ever parked Will return false for vehicles in queue or turned away
 	public boolean	wasParked()
