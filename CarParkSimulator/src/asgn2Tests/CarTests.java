@@ -59,7 +59,7 @@ public class CarTests {
 	 */
 	
 	@Test(expected = VehicleException.class)
-	public  void arrivalTimeLesserZero() throws VehicleException{
+	public  void testAsrrivalTimeLesserZero() throws VehicleException{
 		
 		Car carTest1 = new Car(vehID, -1, false);
 		Car carTest2 = new Car(vehID, 0, false);
@@ -123,7 +123,7 @@ public class CarTests {
 	 * @throws VehicleException if the car is Parked
 	 */
 	@Test(expected = VehicleException.class)
-	public void TestIncorrectCarIsParked_enterQueuedState() throws VehicleException{
+	public void testIncorrectCarIsParked_enterQueuedState() throws VehicleException{
 		
 		car.enterParkedState(getFirstCarParkingTime(), intendedDuration);
 		car.enterQueuedState();
@@ -135,7 +135,7 @@ public class CarTests {
 	 * @throws VehicleException if the car is Queued
 	 */
 	@Test(expected = VehicleException.class)
-	public void testIncorrectCarIsAlreadyInQueued() throws VehicleException{
+	public void testIncorrectCarIsAlreadyInQueue() throws VehicleException{
 		car.enterQueuedState();
 		car.enterQueuedState();
 	}
@@ -273,7 +273,7 @@ public class CarTests {
 	
 	
 	@Test
-	public void testCarGetVehcalID()throws VehicleException{
+	public void testCarGetVehcleID()throws VehicleException{
 		assertEquals("Sheng007",car.getVehID());
 	}
 	
@@ -381,11 +381,6 @@ public class CarTests {
 		assertFalse(car.wasQueued());
 	}
 
-	
-	@Test
-	public void testCarToString() {
-		String result = "Vehicle ID: Sheng007\nArrival time: 60\n";
-		assertEquals(result, car.toString());
-	}
+
 	
 }

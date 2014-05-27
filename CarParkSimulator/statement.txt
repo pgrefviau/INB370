@@ -1,11 +1,21 @@
+----- Statement of contribution -----
+
 I acknowledge that I have contributed to the realization of this assesment.  Me and my partner agree with what is written
 
 Philippe Gref-Viau, n9022481
 
 I acknowledge that I have contributed to the realization of this assesment. Me and my partner agree with what is written
 
-, n7544537
+Sheng Dai, n7544537
 
-Known bugs
+----- Known bugs -----
 
-1- State change not originally trigerred for one of the UI's sliders. This means that the value in the corresponding box will not show up until the user manually changes the slider position.
+1- State change not originally trigerred for one of the UI's sliders. This means that the value in the corresponding box will not show up until the user manually changes the slider position, though the correct value is actually present and will get passed to the simulation when launched.
+
+----- Main method -----
+
+The main method is stil contained in SimulationRunner in the asgn2Simulators package. 
+
+----- Extra -----
+
+Both equals and hashCode methods have been overidden for the vehicule class. Email from Jim said it shouldn't be a problem. 

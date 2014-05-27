@@ -4,6 +4,8 @@ package asgn2Simulators;
 import asgn2CarParks.CarPark;
 import asgn2Exceptions.SimulationException;
 import asgn2Exceptions.VehicleException;
+
+import java.awt.Dimension;
 import java.awt.TextArea;
 
 
@@ -39,6 +41,8 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
                         String standardStayDurationFieldValue)
     {
         
+    	
+    	this.setMinimumSize(new Dimension(800, 400));
         initComponents();
         
         simulationResusltsGraphPanel = new ChartPanel();
@@ -62,6 +66,9 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
         simulationSeedField.setText(simulationSeedFieldValue);
         meanStayDurationField.setText(meanStayDurationFieldValue);
         standardStayDurationField.setText(standardStayDurationFieldValue);
+        
+        outputToTextAreaWithNewLine("Press the button to launch the simulation");
+        
     }
     
     public GUISimulator() 
@@ -365,8 +372,10 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
         carProbDisplay = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(550, 750));
-        setPreferredSize(new java.awt.Dimension(575, 750));
+        setMaximumSize(new java.awt.Dimension(800, 750));
+        setMinimumSize(new java.awt.Dimension(800, 0));
+        setPreferredSize(new java.awt.Dimension(800, 750));
+        setResizable(false);
 
         maxCarSpacesLbl.setText("Maximum car spaces:");
 
