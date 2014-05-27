@@ -162,23 +162,23 @@ public abstract class Vehicle {
 	@Override
 	public String toString() 
 	{
-            
+            String newLine = "\n";
             StringBuilder sb = new StringBuilder();
-            addFormatedString(sb, "Vehicle ID: ", this.getVehID());
-            addFormatedString(sb, "Arrival time: ", String.valueOf(this.getArrivalTime()));
+            addFormatedString(sb, "Vehicle ID: " + this.getVehID() + newLine);
+            addFormatedString(sb, "Arrival time: " + String.valueOf(this.getArrivalTime() + newLine));
+            addFormatedString(sb, "Vehicle was queued" + newLine, "Vehicle was not queued" + newLine, this.wasQueued());
             
             return sb.toString();
 	}
 	
-        private void addFormatedString(StringBuilder sb, String str, String value)
+        private void addFormatedString(StringBuilder sb, String value)
         {
-             addFormatedString(sb, str, value, true);
+             addFormatedString(sb, value, "", true);
         }
         
-        private void addFormatedString(StringBuilder sb, String str, String value, boolean condition)
+        private void addFormatedString(StringBuilder sb, String trueValue, String falseValue, boolean condition)
         {
-            String newLine = "\n";
-            String appendedStr = condition ? (str + value + newLine) : "";
+            String appendedStr = condition ? ( trueValue) : ( falseValue );
             sb.append(appendedStr);
         }
         
