@@ -1,3 +1,19 @@
+commit 3577898234b3e5e4e92a1ae87142788a3917b509
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Tue May 27 18:29:11 2014 +1000
+
+    Add more testing
+    
+    For GUI
+
+commit 6ad94854a7dfd2bb0f0a2dec78d02fd1e4e0d669
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Tue May 27 18:20:18 2014 +1000
+
+    Log txt
+    
+    I got the log txt file
+
 commit cb3bdc731a6401d9fe921a36ff611aa983221312
 Author: jackhook121 <gamescity121@hotmail.com>
 Date:   Tue May 27 18:13:14 2014 +1000
