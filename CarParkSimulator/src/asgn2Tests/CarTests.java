@@ -59,7 +59,7 @@ public class CarTests {
 	 */
 	
 	@Test(expected = VehicleException.class)
-	public  void testAsrrivalTimeLesserZero() throws VehicleException{
+	public  void testArrivalTimeLesserZero() throws VehicleException{
 		
 		Car carTest1 = new Car(vehID, -1, false);
 		Car carTest2 = new Car(vehID, 0, false);
@@ -198,7 +198,11 @@ public class CarTests {
 	public void testCarVehicle() throws VehicleException{
 		
 		Car car = new Car(vehID,arrivalTime,true);
-		assertEquals(car.getVehID(),(String)"Sheng007");
+		assertEquals(car.getVehID(), "S" + (String)"Sheng007");
+		assertEquals(car.getArrivalTime(), arrivalTime);
+		assertEquals(car.isSmall(), true);
+		
+		
 	}
 	
 	
@@ -274,7 +278,10 @@ public class CarTests {
 	
 	@Test
 	public void testCarGetVehcleID()throws VehicleException{
-		assertEquals("Sheng007",car.getVehID());
+		car.getVehID();
+		String prefix = car.isSmall() ? "S" : "C";
+		
+		assertEquals(prefix + vehID,car.getVehID());
 	}
 	
 	@Test
@@ -380,7 +387,7 @@ public class CarTests {
 		
 		assertFalse(car.wasQueued());
 	}
-
+	
 
 	
 }
