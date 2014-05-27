@@ -5,3 +5,7 @@ Philippe Gref-Viau, n9022481
 I acknowledge that I have contributed to the realization of this assesment. Me and my partner agree with what is written
 
 , n7544537
+
+Known bugs
+
+1- State change not originally trigerred for one of the UI's sliders. This means that the value in the corresponding box will not show up until the user manually changes the slider position.
