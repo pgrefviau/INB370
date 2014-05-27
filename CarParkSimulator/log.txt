@@ -1,0 +1,235 @@
+commit cb3bdc731a6401d9fe921a36ff611aa983221312
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Tue May 27 18:13:14 2014 +1000
+
+    GUITests
+    
+    DOne
+
+commit c869614625dfdd710a1a44bf9f32dc4ba9921511
+Merge: 53fd917 a5c64b5
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Tue May 27 17:59:49 2014 +1000
+
+    Merge branch 'master' of https://github.com/redshirt07/INB370
+    
+    Conflicts:
+    	CarParkSimulator/statement.txt
+
+commit 53fd917c1cbdef875dfe3577825d9f0378c40539
+Merge: 8a1e696 f64fe08
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Tue May 27 17:59:25 2014 +1000
+
+    Tests Done
+    
+    Complete the tests
+
+commit a5c64b55768151b2fc7c14882c9a5fe7a1796fa2
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Tue May 27 17:55:39 2014 +1000
+
+    Some more UI pictures again
+
+commit ae76145bb69523fc483f706415dbc8568f770c47
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Tue May 27 17:49:26 2014 +1000
+
+    Added some more UI pictures
+
+commit 8a1e696916b2c5224e98abbb524d55ac25ef7a99
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Tue May 27 16:34:18 2014 +1000
+
+    Tests
+    
+    this testes
+
+commit f64fe0854ec6d2534b11d85c5cb0da107cc9fa73
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Tue May 27 15:58:46 2014 +1000
+
+    Minor changes to vehicle toString method
+
+commit e32e3ff38272027ef41bc55ef792512ee8b3da7f
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Tue May 27 15:11:47 2014 +1000
+
+    Added UI pictures, statement and bat launch file
+
+commit 41e39975161e55061ea525078b15842a583d0ec7
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Mon May 26 19:53:04 2014 +1000
+
+    Testing Motor Cycle done
+    
+    Need to fix comments
+
+commit 2e2658cabdd2721cfb69a9f3ce1a30dc3ef17e63
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Mon May 26 18:55:46 2014 +1000
+
+    Sheng
+
+commit eab92821ff7929561fe630a57b92a8e1856e95db
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Mon May 26 17:32:00 2014 +1000
+
+    Some indications for the testCarIsDissatisfied() method
+
+commit 56a96cda5270e111409d2a398fe5601d74ef7edb
+Merge: e069b4f a6ef81a
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Mon May 26 17:17:09 2014 +1000
+
+    Merge branch 'master' of https://github.com/redshirt07/INB370
+    
+    Conflicts:
+    	CarParkSimulator/.classpath
+
+commit e069b4f0999434bd2d1a48dbd1b52b1983261832
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Mon May 26 17:16:03 2014 +1000
+
+    Pre-pull merge
+
+commit a6ef81ae22325c738e76eb2d29d94c7b8105dc4d
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Mon May 26 17:12:54 2014 +1000
+
+    test
+
+commit b1ce90c6321b76ccd46a81fb20b6532265eaf7e2
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Mon May 26 02:34:13 2014 +1000
+
+    Finished up the chart plotting
+
+commit e5dd849b32f9f2b7884e2d2a7fc59dea140dcf12
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Sun May 25 19:40:54 2014 +1000
+
+    Added some more tests and corrected a few bugs after getting clarifications from Jim
+
+commit 23d12b53dff03365f498689568cb572220aa4c4a
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Sun May 25 04:08:53 2014 +1000
+
+    Added the JFreeChart libraries
+
+commit 3b463c9c2433a0ab3a0b9ef1b3ddad7565710b9d
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Sun May 25 03:33:12 2014 +1000
+
+    Finished up and polished the UI, adding some restraints on invalid values among other things
+
+commit 2d027172c45fb9c87c92dfa650bf87539bb0269a
+Merge: 734748d b4f3561
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Sun May 25 02:21:18 2014 +1000
+
+    Merge branch 'master' of https://github.com/redshirt07/INB370
+    
+    Conflicts:
+    	CarParkSimulator/src/asgn2Vehicles/Vehicle.java
+
+commit 734748d5dbe205116d7fe0bce66eb01c3bba691a
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Sun May 25 01:52:56 2014 +1000
+
+    Did a nice cozy GUI. Corrected a bug in CarPark pertaining to a mistaken count for certain vehicles
+
+commit b4f3561d19f19825f27e97f6ed8d3c38fd4be6ba
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Fri May 23 15:00:16 2014 +1000
+
+    jmmjm
+
+commit 8ebcbedf52cb16626337c091a0d661d049eee1de
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Fri May 23 14:59:43 2014 +1000
+
+    Vehical fix
+
+commit 7c2add662875a0e004d3d472c24eb63a9a67adc1
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Fri May 23 14:58:26 2014 +1000
+
+    CarTest
+
+commit ac278b5d4f1d229b3197f3c87131d12661ade41a
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Thu May 22 17:32:56 2014 +1000
+
+    Added some more tests for CarPark
+
+commit 22707a012e217d2af8d42f08c9a4b53daef5bb10
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Thu May 22 00:44:58 2014 +1000
+
+    Worked on the CarParTests
+
+commit b99865d539babd357295490770dc80352fce16b6
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Tue May 13 16:13:03 2014 +1000
+
+    Made some public methods private for the sake of respecting requirements
+
+commit 3d12859a78ac161a38c5f2a63cdfc88c8ce38b1f
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Tue May 13 15:29:21 2014 +1000
+
+    My stuff
+
+commit b47815be7e8fb17b36137eed400e78299edaebac
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Tue May 13 15:26:29 2014 +1000
+
+    Pre sync sommit
+
+commit f8798ef6ce57d6e7437d6e7ef415d2f3a8de8e60
+Author: jackhook121 <gamescity121@hotmail.com>
+Date:   Tue May 6 16:35:14 2014 +1000
+
+    Testing Egit
+
+commit 9a47acf8981bad28a3ba9f73a486921278e884c7
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Tue May 6 16:24:00 2014 +1000
+
+    Woking implementation. New private methods, CarPark and Vehicule  finished
+
+commit 9bfd72ad3ae1ead84fce9fd2080e5db7fd8e60ab
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Thu May 1 19:52:19 2014 +1000
+
+    Did a whole lot of implementation. Feel free to look through it
+
+commit c927c4201520156d4ec95474a8718ccbb3d5adc2
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Thu May 1 15:43:47 2014 +1000
+
+    Revert "This is a test file"
+    
+    This reverts commit c3084c602bb01c26b90763693e2937e3a5742e56.
+    
+    Conflicts:
+    	text.txt
+
+commit a1b8681e52aade70a2075594cd4c41000ef7029f
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Thu May 1 15:29:56 2014 +1000
+
+    Deleted file
+
+commit 6f5805cb41ff582844ae76fb0b88c4b8ad7e2a4b
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Thu May 1 15:28:49 2014 +1000
+
+    Another test
+
+commit c3084c602bb01c26b90763693e2937e3a5742e56
+Author: aWEsomeGref <pgrefviau@google.com>
+Date:   Thu May 1 15:28:24 2014 +1000
+
+    This is a test file
