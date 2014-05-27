@@ -10,12 +10,6 @@
  */
 package asgn2Simulators;
 
-import java.io.IOException;
-
-import asgn2CarParks.CarPark;
-import asgn2Exceptions.SimulationException;
-import asgn2Exceptions.VehicleException;
-
 /**
  * Class to operate the simulation, taking parameters and utility methods from the Simulator
  * to control the CarPark, and using Log to provide a record of operation. 
@@ -41,6 +35,8 @@ public class SimulationRunner {
             ArgTypes.DOUBLE 	// sdStay
         };
 
+	
+	// Checks if the provided are valid by checking them against validArgTypesMapping
 	private static boolean areArgumentsValid(String[] args)
 	{
             if(args.length != validArgTypesMapping.length)
@@ -77,8 +73,10 @@ public class SimulationRunner {
             else if(areArgumentsValid(args))
                 guiSimulator = new GUISimulator(args);
             else
-                System.exit(-1);
-            
+            {
+                System.out.println("One or more of the provided arguments is invalid. Exiting program.");
+            	System.exit(-1);
+            }
             guiSimulator.setVisible(true);
 	} 
 

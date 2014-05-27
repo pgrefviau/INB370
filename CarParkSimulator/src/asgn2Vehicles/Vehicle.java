@@ -89,7 +89,6 @@ public abstract class Vehicle {
 		
 		this.state = VehiculeState.ARCHIVED;
 		this.departureTime = departureTime;
-		this.hasBeenParked = true;
 	}
 	
 	//Transition vehicle from queued state (mutator) 

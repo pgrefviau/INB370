@@ -28,6 +28,7 @@ public class MotorCycleTests {
 	private int intendedDuration = Constants.MINIMUM_STAY + (int)(Math.random());
 	private int departureTime = parkingTime +intendedDuration ;
 	private int exitTime = 60; 
+	
 	@Before
 	public void creatAMotorObject() throws Exception {
 		motor = new MotorCycle(vehID,arrivalTime);
@@ -52,42 +53,44 @@ public class MotorCycleTests {
 	/////////////////////////////////////////////////
 	
 	/**
-	 * @method testMotorIncorrectArrivalTime()
+	 * @method testMotorCycleIncorrectArrivalTime()
 	 * @param vehID
 	 * @param ArrivalTime
+	 * @throws VehicleException 
 	 * @throws Exception if the arrival time is equal to zero or less
 	 * than zero
 	 */
 	
-	@Test(expected = Exception.class)
-	public  void testMotorIncorrectArrivalTime() throws Exception{
+	@Test(expected = VehicleException.class)
+	public  void testMotorCycleIncorrectArrivalTime() throws VehicleException {
 		
 		MotorCycle motor = new MotorCycle(vehID, -1);
-		MotorCycle motor2 = new MotorCycle(vehID,0);
 	}
 	
 	
 	/**
-	 * @method testMotorIncorrectIsInQueued_enterParedkState()
+	 * @method testMotorCycleIncorrectIsInQueued_enterParedkState()
 	 * @param parkingTime
 	 * @param intendedDuration
+	 * @throws VehicleException 
 	 * @throws Exception if the motor is already Parked.
 	 */
-	@Test(expected = Exception.class)
-	public void testMotorIncorrectIsInQueued_enterParedkState() throws Exception{
+	@Test(expected = VehicleException.class)
+	public void testMotorCycleIncorrectIsInQueued_enterParedkState() throws VehicleException {
 		motor.enterParkedState(getFirstMotorParkingTime(), intendedDuration);
 		motor.enterParkedState(getNextMotorParkingTime(), intendedDuration);
 		
 	}
 	
 	/**
-	 * @method testMotorIncorrectParkingTimeLessThanZero()
+	 * @method testMotorCycleIncorrectParkingTimeLessThanZero()
 	 * @param parkingTime
 	 * @param intendedDuration
+	 * @throws VehicleException 
 	 * @throws Exception if parkingTime is Less Than Zero
 	 */
-	@Test(expected = Exception.class)
-	public void testMotorIncorrectParkingTimeLessThanZero() throws Exception{
+	@Test(expected = VehicleException.class)
+	public void testMotorCycleIncorrectParkingTimeLessThanZero() throws VehicleException {
 		motor.enterParkedState(-1,intendedDuration);
 	}
 	
@@ -95,12 +98,16 @@ public class MotorCycleTests {
 	/**
 	 * @param testIncorrectMotorIntendedDurationLessThanMinimumStay
 	 * @param intendedDuration
+	 * @throws VehicleException 
 	 * @throws Exception if intendedDuration is Less Than the Minimum
 	 * Stay(20)
 	 */
-	@Test(expected = Exception.class)
-	public void testIncorrectMotorIntendedDurationLessThanMinimumStay() throws Exception{
-		motor.enterParkedState(2,intendedDuration/2-(int)(Math.random()));
+	@Test(expected = VehicleException.class)
+	public void testIncorrectMotorIntendedDurationLessThanMinimumStay() throws VehicleException {
+		
+		final int invalidStayDuration = Constants.MINIMUM_STAY - 1;
+		assertTrue(invalidStayDuration < Constants.MINIMUM_STAY);
+		motor.enterParkedState(2,invalidStayDuration);
 	}
 	
 	
@@ -113,25 +120,13 @@ public class MotorCycleTests {
 	////////////////////////////////////////////////////
 	
 	/**
-	* @method TestIncorrectMotorIsParked_enterQueuedState();
-	* @param parkingTime
-	* @param intendedDuration
-	* @throws Exception if the motor is Parked
+	* @throws VehicleException 
+	 * @method testEnterQueueWhenAlreadyInQueuedState();
+	* @throws Exception if the motor is already in queued state
 	*/
-	@Test(expected = Exception.class)
-	public void TestIncorrectMotorIsParked_enterQueuedState() throws Exception{
+	@Test(expected = VehicleException.class)
+	public void testEnterQueueWhenAlreadyInQueuedState() throws VehicleException {
 	
-	motor.enterParkedState(getFirstMotorParkingTime(), intendedDuration);
-	motor.enterQueuedState();
-	}
-	
-	
-	/**
-	 * @method testIncorrectMotorIsAlreadyInQueued();
-	 * @throws Exception if the car is Queued
-	 */
-	@Test(expected = Exception.class)
-	public void testIncorrectMotorIsAlreadyInQueued() throws Exception{
 		motor.enterQueuedState();
 		motor.enterQueuedState();
 	}
@@ -146,145 +141,146 @@ public class MotorCycleTests {
 	
 	////////////////////////////////////////////////
 	/**
-	 * @method testMotorIncorrectISNOTParked()
+	 * @method testMotorCycleExitParkedStateWhenNotParked()
 	 * @param departureTime
+	 * @throws VehicleException 
 	 * @throws Exception if Motor is Not Park or Not Queued
 	 */
 	@Test(expected = VehicleException.class)
-	public void testMotorIncorrectISNOTParked() throws Exception{
+	public void testMotorCycleExitParkedStateWhenNotParked() throws VehicleException {
+		motor.enterQueuedState();
 		motor.exitParkedState(departureTime);
 	}
-	
-	
 
-/**
- * @method testMotorIncorrectIsInAQueued() 
- * @param departureTime
- * @throws Exception if car is in a Queued
- */
-
-@Test(expected = Exception.class)
-public void testMotorIncorrectIsInAQueued() 
-		throws Exception{
-	motor.enterQueuedState();
-	motor.exitParkedState(departureTime);
-
-}
 
 	/**
-	 * @param testMotorIncorrectDepartureTimeLesserThanParkingTime()
+	 * @param testMotorCycleIncorrectDepartureTimeLesserThanParkingTime()
+	 * @throws VehicleException 
 	 * @throws Exception if revised departure time 
 	 * is lesser than parking time
 	 */
 	@Test(expected = VehicleException.class)
-	public void testMotorIncorrectDepartureTimeLesserThanParkingTime() 
-			throws VehicleException{
-		getFirstMotorParkingTime();
-		getNextMotorParkingTime();
-		motor.exitParkedState(motor.getParkingTime()-1);
+	public void testMotorCycleIncorrectDepartureTimeLesserThanParkingTime() throws VehicleException {
 		
+		motor.enterParkedState(0, Constants.MINIMUM_STAY);
+		motor.exitParkedState(motor.getParkingTime()-1);		
 	}
-		
-	//////////////////////////////////////////////////////////////////////
-
-	
-	////////////////////////////////////////////////////
-
 
 	
 	@Test
-	public void testMotorVehicle() throws Exception{
+	public void testMotorCycleConstructor() throws VehicleException {
 		
 		MotorCycle motor = new MotorCycle(vehID,arrivalTime);
-		assertEquals(motor.getVehID(),(String)"Sheng008");
+		assertEquals(motor.getVehID(), vehID);
+		assertEquals(motor.getArrivalTime(), arrivalTime );
 	}
 	
 	
 	/**
-	 * @method testMotorEnterParkedState
+	 * @method testMotorCycleEnterParkedState
 	 * @param parkingTime
 	 * @param intendedDuration
+	 * @throws VehicleException 
 	 * 
 	 */
 	@Test
-	public void testMotorEnterParkedState() throws Exception{
+	public void testEnterParkedState() throws VehicleException {
+		
+		assertFalse(motor.isParked());
+		assertFalse(motor.isSatisfied());
+		assertFalse(motor.wasParked());
 		
 		motor.enterParkedState(parkingTime, intendedDuration);
-		assertEquals(motor.getParkingTime(),parkingTime,intendedDuration);
-	}
-	
-	@Test
-	public void testExitMotorParkedStateTest() throws Exception{
 		
-		motor.enterParkedState(firstMotorParkingTime, intendedDuration);
-		motor.exitParkedState(departureTime);
-		assertEquals(motor.getDepartureTime(),departureTime);
-	}
-	
-	
-	@Test
-	public void testMotorEnterQueuedState() throws Exception{
-		
-		assertFalse(motor.isQueued());
-		motor.enterQueuedState();
-		assertTrue(motor.isQueued());
-	}
-	
-	@Test
-	public void testMotorExitQueuedState() throws Exception{
-		assertFalse(motor.isQueued());
-		motor.enterQueuedState();
-		assertTrue(motor.isQueued());
-		motor.exitQueuedState(motor.getArrivalTime()+1);
-		assertFalse(motor.isQueued());
-	}
-	
-	
-	@Test
-	public void testMotorGetArrivalTime() throws Exception{
-		assertEquals(motor.getArrivalTime(), 60);
-	}
-	
-	
-	@Test
-	public void testMotorGetDepartureTime() throws Exception{
-		assertEquals(0,motor.getDepartureTime());
-		motor.enterParkedState(firstMotorParkingTime, intendedDuration);
-		assertEquals(motor.getDepartureTime(),parkingTime +intendedDuration);
-	}
-	
-	@Test
-	public void testMotorGetParkingTime() throws Exception{
-		assertEquals(0,motor.getParkingTime());
-		motor.enterParkedState(firstMotorParkingTime, intendedDuration);
+		assertTrue(motor.isParked());
+		assertTrue(motor.isSatisfied());
+		assertTrue(motor.wasParked());
 		assertEquals(motor.getParkingTime(),parkingTime);
-	}
-	
-	
-	@Test
-	public void testMotorGetVehcalID()throws Exception{
-		assertEquals("Sheng008",motor.getVehID());
+		assertEquals(parkingTime + intendedDuration, motor.getDepartureTime());
 	}
 	
 	@Test
-	public void testMotorIsParked() throws Exception{
+	public void testExitParkedState() throws VehicleException {
 		
-		assertFalse(motor.isParked());
 		motor.enterParkedState(firstMotorParkingTime, intendedDuration);
 		assertTrue(motor.isParked());
+		
+		motor.exitParkedState(departureTime);
+		assertFalse(motor.isParked());
+		assertEquals(motor.getDepartureTime(),departureTime);
+		assertTrue(motor.wasParked());
+	}
+	
+	
+	@Test
+	public void testEnterQueuedState() throws VehicleException {
+		
+		assertFalse(motor.isQueued());
+		assertFalse(motor.wasQueued());
+		
+		motor.enterQueuedState();
+		
+		assertTrue(motor.wasQueued());
+		assertTrue(motor.isQueued());
 	}
 	
 	@Test
-	public void testMotorIsNotParked() throws Exception{
+	public void testExitQueuedState() throws VehicleException {
+		
+		motor.enterQueuedState();		
+		
+		motor.exitQueuedState(motor.getArrivalTime()+1);
+		assertFalse(motor.isQueued());
+		assertTrue(motor.wasQueued());
+	}
+	
+	
+	@Test
+	public void testGetArrivalTime() throws VehicleException {
+		
+		final int time = arrivalTime;
+		motor = new MotorCycle(vehID, time);
+		assertEquals(motor.getArrivalTime(), time);
+	}
+	
+	
+	@Test
+	public void testGetDepartureTime() throws VehicleException {
+		
+		motor.enterParkedState(firstMotorParkingTime, intendedDuration);
+		assertEquals(firstMotorParkingTime + intendedDuration, motor.getDepartureTime());
+	}
+	
+	@Test
+	public void testMotorCycleGetParkingTime() throws VehicleException {
+		
+		
+		motor.enterParkedState(firstMotorParkingTime, intendedDuration);
+		assertEquals(firstMotorParkingTime, motor.getParkingTime());
+	}
+	
+	
+	@Test
+	public void testGetVehicleID() throws VehicleException {
+		
+		motor = new MotorCycle(vehID, arrivalTime);
+		assertEquals(vehID, motor.getVehID());
+	}
+	
+	@Test
+	public void testIsParked() throws VehicleException {
 		
 		assertFalse(motor.isParked());
-		motor.enterQueuedState();
-		motor.exitQueuedState(60);
+		
+		motor.enterParkedState(firstMotorParkingTime, intendedDuration);
+		assertTrue(motor.isParked());
+		
+		motor.exitParkedState(departureTime);
 		assertFalse(motor.isParked());
 	}
 	
 	@Test
-	public void testMotorIsQueued() throws Exception{
+	public void testIsQueued() throws VehicleException {
 		
 		assertFalse(motor.isQueued());
 		motor.enterQueuedState();
@@ -292,87 +288,78 @@ public void testMotorIncorrectIsInAQueued()
 	}
 	
 	@Test
-	public void testMotorIsNotQueued() throws Exception{
+	public void testIsSatisfied() throws VehicleException {
 		
-		assertFalse(motor.isQueued());
-		motor.enterParkedState(firstMotorParkingTime, intendedDuration);
-		assertFalse(motor.isQueued());
+		MotorCycle mc1 = new MotorCycle(vehID, arrivalTime);
+		MotorCycle mc2 = new MotorCycle(vehID, arrivalTime);
+		
+		assertFalse(mc1.isSatisfied());
+		assertFalse(mc2.isSatisfied());
+		
+		mc1.enterQueuedState();
+		mc2.enterParkedState(firstMotorParkingTime, intendedDuration);
+		
+		assertFalse(mc1.isSatisfied());
+		assertTrue(mc2.isSatisfied());
+		
+		mc2.exitParkedState(departureTime);
+		mc1.exitQueuedState(exitTime);
+		
+		assertFalse(mc1.isSatisfied());
+		assertTrue(mc2.isSatisfied());
 	}
 	
 	
 	@Test
-	public void testMotorIsSatisfied() throws Exception{
-		motor.enterParkedState(firstMotorParkingTime, intendedDuration);
-		assertTrue(motor.isSatisfied());
+	public void testWasParked() throws VehicleException {
+		
+		MotorCycle mc1 = new MotorCycle(vehID, arrivalTime);
+		MotorCycle mc2 = new MotorCycle(vehID, arrivalTime);
+		
+		assertFalse(mc1.wasParked());
+		assertFalse(mc2.wasParked());
+		
+		mc1.enterQueuedState();
+		mc2.enterParkedState(firstMotorParkingTime, intendedDuration);
+		
+		assertFalse(mc1.wasParked());
+		assertTrue(mc2.wasParked());
+		
+		mc2.exitParkedState(departureTime);
+		mc1.exitQueuedState(exitTime);
+		
+		assertFalse(mc1.wasParked());
+		assertTrue(mc2.wasParked());
 	}
 	
 	
 	
 	@Test
-	public void testMotorIsDissatisfied() throws Exception{
+	public void testWasQueued() throws VehicleException{
 		
-
+		MotorCycle mc1 = new MotorCycle(vehID, arrivalTime);
+		MotorCycle mc2 = new MotorCycle(vehID, arrivalTime);
 		
-		motor.enterQueuedState();
-		assertFalse(motor.isSatisfied());
+		assertFalse(mc1.wasQueued());
+		assertFalse(mc2.wasQueued());
 		
-		motor.exitQueuedState(60);
-		assertFalse(motor.isSatisfied());
+		mc1.enterQueuedState();
+		mc2.enterParkedState(firstMotorParkingTime, intendedDuration);
 		
-		Car car2 = new Car("345", 67, false);
-		car2.enterParkedState(firstMotorParkingTime, intendedDuration);
-		assertFalse(motor.isSatisfied());
+		assertTrue(mc1.wasQueued());
+		assertFalse(mc2.wasQueued());
 		
-		car2.exitParkedState(departureTime);
-		assertFalse(motor.isSatisfied());
-	}
-	
-	@Test
-	public void testCarWasParked() throws Exception{
-		assertFalse(motor.wasParked());
-		motor.enterParkedState(firstMotorParkingTime, intendedDuration);
-		assertTrue(motor.wasParked());
-		motor.exitParkedState(departureTime);
-		assertTrue(motor.wasParked());
-	}
-	
-	
-	
-	@Test
-	public void testCarWasNotParked() throws Exception{
+		mc2.exitParkedState(departureTime);
+		mc1.exitQueuedState(exitTime);
 		
-		assertFalse(motor.wasParked());
-		motor.enterQueuedState();
-		motor.exitQueuedState(exitTime);
-		assertFalse(motor.wasParked());
-	}
-	
-	
-	
-	
-	@Test
-	public void testMotorWasQueued() throws VehicleException{
-		assertFalse(motor.wasQueued());
-		
-		
-		motor.enterQueuedState();
-		assertTrue(motor.wasQueued());
-		motor.exitQueuedState(exitTime);
-		assertTrue(motor.wasQueued());
+		assertTrue(mc1.wasQueued());
+		assertFalse(mc2.wasQueued());
 		
 	}
 	
-	@Test
-	public void testMotorWasNotQueued() throws VehicleException{
-		
-		assertFalse(motor.wasQueued());
-		motor.enterParkedState(firstMotorParkingTime, intendedDuration);
-		
-		assertFalse(motor.wasQueued());
-	}
 	
 	@Test
-	public void testMotorToString() {
+	public void testToString() {
 		String result = "Vehicle ID: Sheng008\nArrival time: 60\n";
 		assertEquals(result, motor.toString());
 	}
@@ -383,7 +370,7 @@ public void testMotorIncorrectIsInAQueued()
 //
 //
 //	@Test
-//	public void testMotorCycle() {
+//	public void testMotorCycleCycle() {
 //		fail("Not yet implemented"); // TODO
 //	}
 //

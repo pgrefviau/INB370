@@ -6,15 +6,13 @@ import asgn2Exceptions.SimulationException;
 import asgn2Exceptions.VehicleException;
 import java.awt.TextArea;
 
-import java.awt.TextField;
+
 import java.io.IOException;
-import java.util.EventListener;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.XYPlot;
+
 
 public class GUISimulator extends  javax.swing.JFrame implements ChangeListener  {
 
@@ -22,7 +20,7 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
     private CarPark carPark;
     private Simulator sim;
     private Log log;
-    private SimulationRunner sr;
+
     
     private int simulationCounter = 1;
     
@@ -120,6 +118,7 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
             return new Simulator(seed, meanStay, sdStay, carProb, smallCarProb, motorCycleProb);
     }
     
+    // Returns an integer value from the provided JTextField, or throws an exception if no conversion exists
     private int getIntValueFromField(JTextField field) throws NumberFormatException
     {
         try {
@@ -128,13 +127,14 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
             throw new NumberFormatException("Value for the " + field.getToolTipText() + " field must be a valid integer");
         }
     }
-    
+    // Check if the integer value extracted from the provided JTextField is higher or equal to another integer, throws an exception otherwise
     private void checkIfFieldIntegerValueIsHigherOrEqualTo(JTextField field, int value) throws Exception
     {  
         if(getIntValueFromField(field) < value)
             throw new Exception("Value for the " + field.getToolTipText() + " field must be higher than " + value);
     }
     
+    // Check if the double value extracted from the provided JTextField is higher or equal to another double, throws an exception otherwise
     private void checkIfFieldDoubleValueIsHigherOrEqualTo(JTextField field, double value) throws Exception
     {  
         double fieldValue;
@@ -149,6 +149,7 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
             throw new Exception("Value for the " + field.getToolTipText() + " field must be higher than " + value);
     }
     
+    //Checks if every single UI field contribution to the simulation parameters have acceptable values
     private boolean checkUiFieldsValidity()
     {
         try {
@@ -171,6 +172,7 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
         return true;
     }
    
+    // Event handler for the 3 sliders' state change
     @Override
     public void stateChanged(ChangeEvent e) {
         JSlider slider = (JSlider)e.getSource();
@@ -187,6 +189,7 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
         }
     }
     
+    // Tries to launch a simulation instance according to the current parameters
     private void launchCarParkSimulation()
     {
         clearTextArea();
@@ -194,7 +197,7 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
         if(!checkUiFieldsValidity())
             return;
         
-        outputToTextArea("Launching simulation #" + (simulationCounter++) +"...");
+        outputToTextAreaWithNewLine("Launching simulation #" + (simulationCounter++) +"...");
         deactivateAllInputs();
         
         try {
@@ -203,7 +206,7 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
             log = new Log();
         } catch (IOException | SimulationException e1) {
             e1.printStackTrace();
-            outputToTextArea(e1.getMessage());
+            outputToTextAreaWithNewLine(e1.getMessage());
             activateAllInputs();
         }
         
@@ -213,36 +216,46 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
             runSimulation();
         } catch (Exception e) {
             e.printStackTrace();
-            outputToTextArea(e.getMessage());
+            outputToTextAreaWithNewLine(e.getMessage());
         }
         finally{
             activateAllInputs();
         }
 
         
-        outputToTextArea("Simulation completed !");
+        outputToTextAreaWithNewLine("Simulation completed !");
     }
     
+    // Outputs the string to the text area
     private void outputToTextArea(String str)
     {
-        simulationResultsTextArea.append(str + "\n");
+        simulationResultsTextArea.append(str);
     }
     
+    private void outputToTextAreaWithNewLine(String str)
+    {
+    	outputToTextArea(str + "\n");
+    }
+    
+    // Clears the text area
     private void clearTextArea()
     {
         simulationResultsTextArea.setText("");
     }
     
+    // Deactivate all the UI inputs 
     private void deactivateAllInputs()
     {
         setAllInputsActivationState(false);
     }
     
+    // Reactivate all the UI inputs
     private void activateAllInputs()
     {
         setAllInputsActivationState(true);
     }
     
+    // Set all the input fields' enabled setting to a certain value
     private void setAllInputsActivationState(boolean isEnabled)
     {
         carArrivalProbSlider.setEnabled(isEnabled);
@@ -289,14 +302,15 @@ public class GUISimulator extends  javax.swing.JFrame implements ChangeListener 
 			}
 			//Log progress 
 			this.log.logEntry(time,this.carPark);
-                        this.simulationResusltsGraphPanel.addDataForGivenTimePoint
-                        (
-                            time, 
-                            carPark.getNumCars(), 
-                            carPark.getNumSmallCars(), 
-                            carPark.getNumMotorCycles(), 
-                            carPark.getNumCars() + carPark.getNumSmallCars() + carPark.getNumMotorCycles()
-                        );
+			this.outputToTextArea(this.carPark.getStatus(time));
+            this.simulationResusltsGraphPanel.addDataForGivenTimePoint
+            (
+                time, 
+                carPark.getNumCars(), 
+                carPark.getNumSmallCars(), 
+                carPark.getNumMotorCycles(), 
+                carPark.getNumCars() + carPark.getNumSmallCars() + carPark.getNumMotorCycles()
+            );
 		}
 		this.log.finalise(this.carPark);
                 this.simulationResusltsGraphPanel.generateFinalChartFromData();

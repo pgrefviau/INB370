@@ -35,11 +35,13 @@ public class ChartPanel extends org.jfree.chart.ChartPanel {
         super(new JFreeChart(new XYPlot()));    
     }
 
+    // Resets the simulation data before starting a new one
     public final void resetSimulationData()
     {
         setUpSeries();
     }
     
+    // Sets up the different series used to plot the graph
     private void setUpSeries()
     {
         vehTotal = new TimeSeries("Total Vehicles");
@@ -48,6 +50,7 @@ public class ChartPanel extends org.jfree.chart.ChartPanel {
         mcTotal = new TimeSeries("MotorCycles");
     }
     
+    // Adds datapoints for a particular moment intime to the graph
     public void addDataForGivenTimePoint( int time, int nbCars, int nbSmallCars, int nbMotorCycles, int total)
     {
         cal.set(2014,0,1,6, time);
@@ -59,6 +62,7 @@ public class ChartPanel extends org.jfree.chart.ChartPanel {
 	vehTotal.add(new Minute(timePoint), total);        
     }
     
+    // Generate the chart once the car park simulation is completed
     public void generateFinalChartFromData()
     {
         TimeSeriesCollection finalCollection = getFinalCollection();
@@ -66,6 +70,7 @@ public class ChartPanel extends org.jfree.chart.ChartPanel {
         setChart(chart);
     }
     
+    // Get the collection containing the final relevant time series
     private TimeSeriesCollection getFinalCollection()
     {   
         TimeSeriesCollection tsc = new TimeSeriesCollection(); 

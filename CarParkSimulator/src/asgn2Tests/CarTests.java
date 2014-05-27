@@ -45,12 +45,6 @@ public class CarTests {
 	}
 	
 
-	
-	
-	
-
-	
-
 //////////////////////////////////////////////////
 	/*
 	 * Boundary Conditions Testings
